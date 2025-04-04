@@ -7,20 +7,81 @@
     <meta name="googlebot" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="shortcut icon" type="image/png" href="logo.png">
-    <title>Get Started with Kite - WordPress Platform for Churches</title>
+    <title>Contact Us - Kite WordPress Platform for Churches</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .get-started-section {
+        .contact-section {
             padding: 5rem 5%;
             background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, transparent 60%),
                         linear-gradient(225deg, rgba(255, 101, 132, 0.1) 0%, transparent 60%);
         }
         
-        .get-started-content {
-            max-width: 800px;
+        .contact-content {
+            max-width: 1200px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        
+        .contact-info {
             padding: 2rem;
+        }
+        
+        .contact-info h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-rainbow);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.01em;
+        }
+        
+        .contact-info p {
+            color: var(--text-light);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-card {
+            background: var(--background-light);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            margin-top: 2rem;
+        }
+        
+        .contact-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .contact-detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-detail:last-child {
+            margin-bottom: 0;
+        }
+        
+        .contact-icon {
+            color: var(--primary);
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        
+        .contact-text {
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.5;
         }
         
         .form-container {
@@ -44,23 +105,18 @@
         }
         
         .form-heading {
-            text-align: center;
             margin-bottom: 2rem;
         }
         
-        .form-heading h1 {
-            font-size: 2.2rem;
+        .form-heading h2 {
+            font-size: 1.8rem;
             margin-bottom: 1rem;
-            background: var(--gradient-rainbow);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.01em;
+            color: var(--text);
         }
         
         .form-heading p {
             color: var(--text-light);
-            font-size: 1.05rem;
+            font-size: 1rem;
             line-height: 1.6;
         }
         
@@ -110,26 +166,8 @@
             padding-right: 2.5rem;
         }
         
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .checkbox-group input {
-            width: auto;
-            margin-top: 0.25rem;
-        }
-        
-        .checkbox-group label {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-bottom: 0;
-        }
-        
         .submit-btn {
-            padding: 0.8rem 1.75rem;
+            padding: 0.8rem 1.5rem;
             background: var(--primary);
             color: var(--text);
             border: none;
@@ -140,6 +178,7 @@
             transition: all 0.3s ease;
             width: 100%;
             margin-top: 1rem;
+            box-shadow: 0 4px 10px rgba(108, 99, 255, 0.2);
         }
         
         .submit-btn:hover {
@@ -147,28 +186,26 @@
             box-shadow: 0 6px 16px rgba(108, 99, 255, 0.3);
         }
         
-        .form-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-        
         @media (max-width: 768px) {
-            .get-started-content {
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .contact-info {
                 padding: 1rem;
+            }
+            
+            .contact-info h1 {
+                font-size: 1.8rem;
             }
             
             .form-container {
                 padding: 1.5rem;
             }
             
-            .form-heading h1 {
-                font-size: 1.8rem;
-            }
-            
-            .form-heading p {
-                font-size: 0.95rem;
+            .form-heading h2 {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -205,97 +242,84 @@
     </header>
 
     <main>
-        <section class="get-started-section">
-            <div class="get-started-content">
+        <section class="contact-section">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h1>Contact Us</h1>
+                    <p>Have questions about Kite? We're here to help! Reach out to our team using the contact information below or fill out the form.</p>
+                    
+                    <div class="contact-card">
+                        <h3>Our Office</h3>
+                        <div class="contact-detail">
+                            <i data-lucide="map-pin" class="contact-icon"></i>
+                            <div class="contact-text">
+                                36-1361 Glenview Ave<br>
+                                Kelowna, BC V1Y 7B3
+                            </div>
+                        </div>
+                        
+                        <div class="contact-detail">
+                            <i data-lucide="phone" class="contact-icon"></i>
+                            <div class="contact-text">
+                                (250) 555-0123
+                            </div>
+                        </div>
+                        
+                        <div class="contact-detail">
+                            <i data-lucide="mail" class="contact-icon"></i>
+                            <div class="contact-text">
+                                hello@kiteplatform.com
+                            </div>
+                        </div>
+                        
+                        <div class="contact-detail">
+                            <i data-lucide="clock" class="contact-icon"></i>
+                            <div class="contact-text">
+                                Monday - Friday: 9am - 5pm PST<br>
+                                Saturday - Sunday: Closed
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="form-container">
                     <div class="form-heading">
-                        <h1>Get Started with Kite</h1>
-                        <p>Fill out the form below and our team will get in touch with you to discuss how Kite can help your church grow.</p>
+                        <h2>Send Us a Message</h2>
+                        <p>Fill out the form below and we'll get back to you as soon as possible.</p>
                     </div>
                     
                     <form id="contact-form" name="kite-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                        <input type="hidden" name="form-name" value="kite-contact">
                         <p class="hidden" style="display: none;">
                             <label>Don't fill this out if you're human: <input name="bot-field" /></label>
                         </p>
-                        <input type="hidden" name="form-name" value="kite-contact" />
                         
                         <div class="form-group">
-                            <label for="name">Your Name *</label>
+                            <label for="name">Name *</label>
                             <input type="text" id="name" name="name" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="church">Church Name *</label>
-                            <input type="text" id="church" name="church" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email Address *</label>
+                            <label for="email">Email *</label>
                             <input type="email" id="email" name="email" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="role">Your Role *</label>
-                            <select id="role" name="role" required>
-                                <option value="" disabled selected>Select your role</option>
-                                <option value="Pastor">Pastor</option>
-                                <option value="Associate Pastor">Associate Pastor</option>
-                                <option value="Communications Director">Communications Director</option>
-                                <option value="Technical Director">Technical Director</option>
-                                <option value="Administrator">Administrator</option>
-                                <option value="Volunteer">Volunteer</option>
-                                <option value="Other">Other</option>
+                            <label for="inquiry-type">Inquiry Type *</label>
+                            <select id="inquiry-type" name="inquiry_type" required>
+                                <option value="" disabled selected>Select an option</option>
+                                <option value="General">General</option>
+                                <option value="Support">Support</option>
+                                <option value="Media Inquiries">Media Inquiries</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
-                            <label for="size">Church Size *</label>
-                            <select id="size" name="size" required>
-                                <option value="" disabled selected>Select church size</option>
-                                <option value="Under 100">Under 100</option>
-                                <option value="100-250">100-250</option>
-                                <option value="251-500">251-500</option>
-                                <option value="501-1000">501-1000</option>
-                                <option value="1001-2500">1001-2500</option>
-                                <option value="2500+">2500+</option>
-                            </select>
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" required placeholder="How can we help you?"></textarea>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="needs">What are you looking for help with? *</label>
-                            <select id="needs" name="needs" required>
-                                <option value="" disabled selected>Select your primary need</option>
-                                <option value="Website Design">Website Design</option>
-                                <option value="Podcast Hosting">Podcast Hosting</option>
-                                <option value="YouTube Integration">YouTube Integration</option>
-                                <option value="Events Management">Events Management</option>
-                                <option value="Payment Processing">Payment Processing</option>
-                                <option value="Community Management">Community Management</option>
-                                <option value="Multiple Needs">Multiple Needs</option>
-                                <option value="Not Sure">Not Sure</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="message">Additional Information</label>
-                            <textarea id="message" name="message" placeholder="Tell us more about your church and what you're looking for..."></textarea>
-                        </div>
-                        
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="newsletter" name="newsletter" checked>
-                            <label for="newsletter">I'd like to receive updates, tips, and special offers from Kite.</label>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">Submit Request</button>
-                        
-                        <div class="form-footer">
-                            <p>By submitting this form, you agree to our <a href="terms-and-privacy.html#privacy-content">Privacy Policy</a> and <a href="terms-and-privacy.html">Terms of Service</a>.</p>
-                        </div>
+                        <button type="submit" class="submit-btn">Send Message</button>
                     </form>
                 </div>
             </div>
@@ -357,10 +381,6 @@
     <script src="script.js"></script>
     <script>
         lucide.createIcons();
-        
-        // With Netlify forms, we don't need to handle the submission manually
-        // But we can still show a custom success message if needed
-        // Netlify will redirect to a success page or show its own message
     </script>
 </body>
 </html>
