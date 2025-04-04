@@ -693,7 +693,8 @@ a {
 }
 
 .footer {
-    background-color: var(--secondary);
+    background-color: #122730;
+    /* background-color: var(--secondary); */
     color: white;
     padding: 3.5rem 5% 2rem;
 }
