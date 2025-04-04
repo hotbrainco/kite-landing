@@ -1063,7 +1063,8 @@ body {
 
 .demo-text p {
     font-size: 1.05rem;
-    color: var(--text-light);
+    color: white;
+    /* color: var(--text-light); */
     margin-bottom: 1.75rem;
     line-height: 1.6;
 }
