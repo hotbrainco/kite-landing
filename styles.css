@@ -73,10 +73,12 @@ a {
     height: 46px;
     width: auto;
     transition: transform 0.3s ease;
+    opacity:0.9;
 }
 
 .logo img:hover {
     transform: scale(1.05);
+    opacity: 1;
 }
 
 .logo img.logo-footer {
