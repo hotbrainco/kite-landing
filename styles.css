@@ -72,7 +72,7 @@ a {
 .logo img {
     height: 46px;
     width: auto;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
     opacity:0.9;
 }
 
