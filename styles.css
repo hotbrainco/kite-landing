@@ -498,7 +498,7 @@ a {
     }
     
     .demo-text {
-        text-align: center;
+        /* text-align: center; */
     }
     
     .demo-text h2 {
