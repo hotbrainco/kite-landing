@@ -1117,6 +1117,26 @@ a {
     font-size: 0.95rem;
 }
 
+.demo-image {
+    background: var(--background);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(239, 155, 119, 0.15);
+    transform: perspective(1000px) rotateY(-5deg);
+    transition: transform 0.3s ease;
+    max-width: 100%;
+}
+
+.demo-image:hover {
+    transform: perspective(1000px) rotateY(0deg);
+}
+
+.demo-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 .demo-video {
     background: var(--background);
     border-radius: 16px;
