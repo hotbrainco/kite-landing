@@ -483,6 +483,12 @@ a {
         padding: 0 1.5rem;
     }
 
+    .demo-image {
+        transform: none;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
     .demo-video {
         transform: none;
         max-width: 100%;
@@ -1047,6 +1053,11 @@ a {
 }
 
 @media (min-width: 769px) {
+    
+    .demo-image {
+        display: block; /* Show on desktop */
+    }
+    
     .demo-video {
         display: block; /* Show on desktop */
     }
