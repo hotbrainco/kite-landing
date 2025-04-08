@@ -136,10 +136,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!priceElement) return;
 
                 // Handle custom pricing
-                if (price === 'custom') {
+                /* if (price === 'custom') {
                     priceElement.textContent = 'Custom';
                     if (periodElement) periodElement.style.display = 'none';
-                    return;
+                    return; */
                 }
 
                 // Update price and period
