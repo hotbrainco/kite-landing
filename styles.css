@@ -1078,7 +1078,7 @@ a {
     color: var(--text);
     margin-bottom: 1.25rem;
     line-height: 1.2;
-    text-align: center;
+    /* text-align: center; */
     letter-spacing: -0.01em;
 }
 
