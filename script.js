@@ -1,3 +1,10 @@
+// Aplicar o tema imediatamente para evitar flash de estilo incorreto
+(function() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.classList.toggle('light-theme', savedTheme === 'light');
+    document.body.classList.toggle('light-theme', savedTheme === 'light');
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     const menuToggle = document.querySelector('.menu-toggle');
@@ -21,15 +28,41 @@ document.addEventListener('DOMContentLoaded', function() {
         if (navLinks) navLinks.style.display = '';
     }
 
+    // Função para abrir o menu
+    const openMobileMenu = () => {
+        menuToggle?.classList.add('active');
+        navLinks?.classList.add('active');
+        document.body.classList.add('menu-open');
+        isMobileMenuOpen = true;
+    };
+    
+    // Função para fechar o menu
+    const closeMobileMenu = () => {
+        menuToggle?.classList.remove('active');
+        navLinks?.classList.remove('active');
+        document.body.classList.remove('menu-open');
+        isMobileMenuOpen = false;
+    };
+    
+    // Listener para o botão de menu hamburger
     menuToggle?.addEventListener('click', function(e) {
         e.stopPropagation();
-        this.classList.toggle('active');
-        navLinks.classList.toggle('active');
-        document.body.classList.toggle('menu-open');
-        isMobileMenuOpen = !isMobileMenuOpen;
-        
-        // Ensure nav links are visible when toggling
-        navLinks.style.display = isMobileMenuOpen ? 'flex' : '';
+        openMobileMenu();
+    });
+    
+    // Listener para o botão de fechar
+    const closeMenuBtn = document.querySelector('.close-menu-btn');
+    closeMenuBtn?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeMobileMenu();
+    });
+    
+    // Fechar o menu ao clicar em um link interno
+    const mobileMenuLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    mobileMenuLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            closeMobileMenu();
+        });
     });
 
     // Close mobile menu when clicking a link
@@ -171,6 +204,88 @@ document.addEventListener('DOMContentLoaded', function() {
      * - Chevron rotation animation
      * - Keyboard accessibility
      */
+    /**
+     * Theme Toggle Functionality
+     * ---------------------------
+     * This section handles the light/dark theme toggle and theme persistence.
+     * 
+     * Features:
+     * - Toggle between light and dark themes
+     * - Saves theme preference to localStorage
+     * - Automatically loads saved theme preference
+     */
+    const initThemeToggle = () => {
+        const toggle = document.getElementById('themeToggle');
+        const toggleMobile = document.getElementById('themeToggleMobile');
+        
+        if (!toggle && !toggleMobile) return;
+        
+        // Check for saved theme preference or use default (dark)
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        
+        // Limpar classes anteriores para garantir estado consistente
+        document.documentElement.classList.remove('light-theme', 'dark-theme');
+        document.body.classList.remove('light-theme', 'dark-theme');
+        
+        // Aplicar o tema correto
+        const theme = savedTheme === 'light' ? 'light' : 'dark';
+        document.documentElement.classList.add(`${theme}-theme`);
+        document.body.classList.add(`${theme}-theme`);
+        
+        // Update toggle states to match current theme
+        if (toggle) toggle.checked = savedTheme === 'light';
+        if (toggleMobile) toggleMobile.checked = savedTheme === 'light';
+        
+        // Função para alternar o tema
+        const toggleTheme = (isLightTheme) => {
+            const newTheme = isLightTheme ? 'light' : 'dark';
+            
+            // Limpar classes anteriores para evitar estados inconsistentes
+            document.documentElement.classList.remove('light-theme', 'dark-theme');
+            document.body.classList.remove('light-theme', 'dark-theme');
+            
+            // Aplicar o tema correto em todo o documento
+            document.documentElement.classList.add(`${newTheme}-theme`);
+            document.body.classList.add(`${newTheme}-theme`);
+            
+            // Sincronizar os dois toggles
+            if (toggle) toggle.checked = isLightTheme;
+            if (toggleMobile) toggleMobile.checked = isLightTheme;
+            
+            // Save theme preference
+            localStorage.setItem('theme', newTheme);
+        };
+        
+        // Toggle theme when main switch is clicked
+        if (toggle) {
+            toggle.addEventListener('change', (e) => {
+                toggleTheme(e.target.checked);
+            });
+        }
+        
+        // Toggle theme when mobile switch is clicked
+        if (toggleMobile) {
+            toggleMobile.addEventListener('change', (e) => {
+                toggleTheme(e.target.checked);
+            });
+        }
+        
+        // Handle theme toggle via icon click
+        const themeIcons = document.querySelectorAll('.theme-toggle .toggle-icon');
+        themeIcons.forEach(icon => {
+            icon.addEventListener('click', () => {
+                // Determine which toggle to use based on context
+                const activeToggle = icon.closest('.mobile-bottom-menu') ? toggleMobile : toggle;
+                if (!activeToggle) return;
+                
+                // Toggle the switch and trigger change event
+                activeToggle.checked = !activeToggle.checked;
+                const event = new Event('change');
+                activeToggle.dispatchEvent(event);
+            });
+        });
+    };
+
     const initAccordions = () => {
         const accordionItems = document.querySelectorAll('.accordion-item');
         
@@ -224,6 +339,14 @@ document.addEventListener('DOMContentLoaded', function() {
     initPricingToggle();
     initAccordions();
 
+    // Initialize theme toggle
+    initThemeToggle();
+    
     // Initialize Lucide icons
     lucide.createIcons();
+    
+    // Reaplicar o tema após carregamento da página para garantir consistência
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.classList.toggle('light-theme', savedTheme === 'light');
+    document.body.classList.toggle('light-theme', savedTheme === 'light');
 });

@@ -52,6 +52,99 @@ a {
     }
 }
 
+/* Light Theme Styles */
+html.light-theme,
+body.light-theme {
+    --background: #FFFFFF;
+    --background-light: #F5F7FA;
+    --text: #333333;
+    --text-light: #666666;
+    /* Override cores para melhorar contraste */
+    --primary: #5F56EE;
+    --primary-light: #7B75FF;
+}
+
+/* When light theme is active, update various elements */
+body.light-theme .header {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+html.light-theme .logo img,
+body.light-theme .logo img {
+    filter: brightness(0);
+}
+
+body.light-theme .footer-logo .logo-svg,
+body.light-theme .footer-logo img {
+    filter: none;
+}
+
+body.light-theme .feature-card {
+    background: #FFFFFF;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .feature-card p {
+    color: #444444;
+}
+
+body.light-theme .feature-card-dark {
+    background: #F0F2F5;
+}
+
+body.light-theme .pricing-card {
+    background: #FFFFFF;
+}
+
+body.light-theme .accordion-item {
+    background: #FFFFFF;
+}
+
+body.light-theme .form-container {
+    background: #FFFFFF;
+}
+
+body.light-theme .footer {
+    background: #F0F2F5;
+    border-top: 1px solid #E5E7EB;
+}
+
+body.light-theme .footer-content {
+    color: #333333;
+}
+
+body.light-theme .footer-bottom {
+    background: #F0F2F5;
+    color: #333333;
+    border-top: 1px solid #E5E7EB;
+}
+
+body.light-theme .footer-logo img,
+body.light-theme .footer-logo .logo-svg {
+    filter: brightness(0);
+}
+
+body.light-theme .footer-column h3 {
+    color: #333333;
+}
+
+body.light-theme .footer-column a {
+    color: #555555;
+}
+
+body.light-theme .footer-column a:hover {
+    color: var(--primary);
+}
+
+body.light-theme .social-icon {
+    color: #333333;
+}
+
+body.light-theme a {
+    color: #6C63FF;
+}
+
 .header {
     position: sticky;
     top: 0;
@@ -68,6 +161,11 @@ a {
     padding: 1.5rem 5%;
     max-width: 1300px;
     margin: 0 auto;
+    flex-wrap: nowrap;
+}
+
+.logo {
+    flex-shrink: 0;
 }
 
 .logo img {
@@ -90,9 +188,11 @@ a {
 
 .nav-links {
     display: flex;
-    gap: 3rem;
+    gap: 1.5rem;
     margin-left: auto;
     margin-right: 2rem;
+    flex: 1;
+    justify-content: center;
 }
 
 @media (max-width: 768px) {
@@ -143,6 +243,7 @@ a {
     position: relative;
     padding: 0.4rem 0;
     letter-spacing: 0.02em;
+    white-space: nowrap;
 }
 
 .nav-links a::after {
@@ -160,9 +261,19 @@ a {
     width: 100%;
 }
 
+.desktop-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 .auth-buttons {
     display: flex;
     gap: 1rem;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .download-btn {
@@ -498,7 +609,7 @@ a {
     }
     
     .demo-text {
-        /* text-align: center; */
+        margin-bottom: 1.5rem;
     }
     
     .demo-text h2 {
@@ -824,8 +935,630 @@ a {
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 32px;
+    width: 52px;
+    height: 26px;
+}
+
+/* Theme Toggle Styles */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-right: 16px;
+}
+
+.theme-toggle .toggle-icon {
+    font-size: 16px;
+    color: var(--text);
+}
+
+/* Bootstrap Switch Overrides */
+.theme-toggle .form-check {
+    margin: 0;
+    padding-left: 0;
+    display: flex;
+    align-items: center;
+}
+
+.theme-toggle .form-check-input {
+    width: 40px;
+    height: 20px;
+    cursor: pointer;
+    background-color: rgba(108, 99, 255, 0.2);
+    border-color: rgba(108, 99, 255, 0.2);
+}
+
+.theme-toggle .form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.theme-toggle .form-check-input:focus {
+    box-shadow: 0 0 0 0.15rem rgba(108, 99, 255, 0.25);
+    border-color: var(--primary);
+}
+
+/* Override Bootstrap styles to match theme */
+body.light-theme .form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* Corrigir contraste de botões no tema claro */
+body.light-theme .cta-button,
+body.light-theme .download-btn,
+body.light-theme .auth-buttons a {
+    color: white;
+}
+
+/* Tamanho personalizado para toggle de preços */
+#pricingToggle.form-check-input {
+    width: 48px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.pricing-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Estilos para o toggle de tema */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theme-toggle .toggle-icon {
+    color: var(--text-light);
+    stroke-width: 1.5;
+    width: 18px;
+    height: 18px;
+}
+
+/* Configurações gerais do menu toggle e header */
+.menu-toggle {
+    display: none; /* Escondido por padrão em desktop */
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+    margin-left: auto;
+}
+
+/* Estilo padrão para links no desktop */
+.nav-links > a {
+    margin: 0 10px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    position: relative;
+    font-size: 0.95rem;
+    padding: 0.2rem 0;
+    white-space: nowrap;
+}
+
+.nav-links > a:hover {
+    color: var(--primary);
+}
+
+/* Ajustes para desktop */
+@media (min-width: 991px) {
+    .nav-links {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+        flex-direction: row;
+        height: auto;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        background-color: transparent;
+        flex: 1;
+        margin: 0 15px;
+        min-width: 0;
+    }
+    
+    .mobile-menu-content,
+    .close-menu-btn {
+        display: none !important;
+    }
+    
+    /* Links do menu desktop */
+    .nav-links > a {
+        display: inline-block;
+        text-align: center;
+        width: auto;
+        border-bottom: none;
+    }
+    
+    /* Efeito de underline nos links do desktop */
+    .nav-links > a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        background: var(--primary);
+        left: 0;
+        bottom: -4px;
+        transition: width 0.3s ease;
+    }
+    
+    .nav-links > a:hover::after {
+        width: 100%;
+    }
+}
+
+.menu-toggle:focus, 
+.menu-toggle:active {
+    background: transparent;
+    outline: none;
+    box-shadow: none;
+}
+
+/* Responsividade para o toggle de tema e menu mobile */
+@media (max-width: 990px) {
+    /* Ajustes do header para mobile */
+    .navbar {
+        padding: 1rem 1.5rem;
+    }
+    
+    /* Mostrar menu toggle em dispositivos móveis */
+    .menu-toggle {
+        display: flex;
+    }
+    
+    /* Ocultar elementos do header em mobile */
+    .desktop-controls {
+        display: none;
+    }
+    
+    /* Ocultar links da navegação principal no desktop quando estiver no mobile */
+    .nav-links > a {
+        display: none;
+    }
+
+    
+    .menu-toggle span {
+        width: 100%;
+        height: 3px;
+        background-color: var(--text);
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+    
+    .menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+    
+    .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+    }
+    
+    /* Menu mobile completamente escondido quando não ativo */
+    .nav-links {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100vh;
+        background-color: var(--background);
+        opacity: 0;
+        visibility: hidden;
+        z-index: 999;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        padding: 5rem 0 2rem;
+    }
+    
+    /* Mostrar o menu apenas quando ativo */
+    .nav-links.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+    }
+    
+    /* Garantir que o conteúdo mobile seja visível quando o menu estiver ativo */
+    .mobile-menu-content {
+        display: flex;
+        width: 100%;
+    }
+    
+    /* Assegurar que todos os elementos do menu mobile estejam visíveis */
+    .nav-links.active .mobile-menu-content,
+    .nav-links.active .mobile-menu-top,
+    .nav-links.active .mobile-menu-top a,
+    .nav-links.active .mobile-menu-bottom,
+    .nav-links.active .mobile-get-started,
+    .nav-links.active .mobile-get-started .download-btn {
+        display: block !important;
+    }
+    
+    .nav-links.active .mobile-menu-content {
+        display: flex !important;
+    }
+    
+    .nav-links.active .mobile-menu-top {
+        display: flex !important;
+        flex-direction: column;
+    }
+    
+    /* Estilos para os itens do menu mobile */
+    .mobile-menu-top {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+    
+    /* Estilos para o botão GET STARTED do menu mobile */
+    .mobile-get-started-btn {
+        display: block !important;
+        width: 100%;
+        text-align: center;
+        padding: 0.8rem;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        background-color: var(--primary);
+        color: var(--text) !important;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-get-started-btn:hover {
+        background-color: var(--primary-light);
+        transform: translateY(-2px);
+    }
+    
+    .mobile-menu-bottom {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-top: auto;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .mobile-menu-bottom .theme-toggle {
+        margin-bottom: 1.5rem;
+        display: flex;
+    }
+    
+    .mobile-menu-bottom .auth-buttons {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Botão de fechar menu mobile */
+    .close-menu-btn {
+        position: absolute;
+        top: 1.2rem;
+        right: 1.2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: none;
+        color: var(--text-light);
+        cursor: pointer;
+        z-index: 1000;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+    
+    .close-menu-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--primary);
+    }
+    
+    .close-menu-btn [data-lucide] {
+        width: 22px;
+        height: 22px;
+        stroke-width: 2px;
+    }
+    
+    /* Conteúdo interno do menu mobile */
+    .mobile-menu-content {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 2rem;
+        overflow-y: auto;
+    }
+    
+    /* Área superior com links principais */
+    .mobile-menu-top {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    /* Links no menu mobile */
+    .mobile-menu-top a {
+        margin: 0.6rem 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+        position: relative;
+        transition: all 0.2s ease;
+        padding: 0.7rem 0;
+        width: 100%;
+        text-align: center;
+        color: var(--text-light);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Efeito de hover/focus nos links do menu mobile */
+    .mobile-menu-top a:hover,
+    .mobile-menu-top a:focus {
+        color: var(--primary);
+    }
+    
+    /* Destaque para o link ativo no menu mobile */
+    .nav-links a.active {
+        color: var(--primary);
+        font-weight: 600;
+    }
+    
+    /* Mover auth-buttons e theme-toggle para dentro do menu mobile */
+    .header .auth-buttons,
+    .header .theme-toggle {
+        display: none;
+    }
+    
+    /* Estilos para a área inferior do menu mobile */
+    .mobile-menu-bottom {
+        width: 100%;
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    /* Toggle de tema no menu mobile */
+    .nav-links .mobile-menu-bottom .theme-toggle {
+        display: flex;
+        margin: 1rem 0 1.5rem;
+        justify-content: center;
+        align-items: center;
+        background: rgba(108, 99, 255, 0.1);
+        padding: 0.6rem 1.2rem;
+        border-radius: 30px;
+        width: auto;
+    }
+    
+    /* Botão Get Started no menu mobile */
+    .nav-links .mobile-menu-bottom .auth-buttons {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .nav-links .mobile-menu-bottom .auth-buttons a {
+        margin: 0;
+        width: 100%;
+        max-width: 220px;
+        text-align: center;
+        padding: 0.9rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+        border: none;
+    }
+    
+    /* Mostrar apenas o ícone relevante no toggle de tema para mobile */
+    .nav-links .mobile-bottom-menu .theme-toggle .form-check {
+        display: none; /* Esconder completamente o switch no menu mobile */
+    }
+    
+    /* Esconder todos os ícones primeiro */
+    .nav-links .mobile-bottom-menu .theme-toggle [data-lucide] {
+        display: none;
+    }
+    
+    /* Botão fechar menu */
+    .close-menu-btn {
+        position: absolute;
+        top: 1.2rem;
+        right: 1.2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: none;
+        color: var(--text-light);
+        cursor: pointer;
+        z-index: 1000;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+    
+    .close-menu-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--primary);
+    }
+    
+    .close-menu-btn [data-lucide] {
+        width: 22px;
+        height: 22px;
+        stroke-width: 2px;
+    }
+    
+    /* Mostrar apenas o ícone relevante */
+    body.dark-theme .nav-links .mobile-bottom-menu .theme-toggle [data-lucide="sun"] {
+        display: inline-flex;
+        width: 24px;
+        height: 24px;
+        stroke-width: 2px;
+        cursor: pointer;
+    }
+    
+    body.light-theme .nav-links .mobile-bottom-menu .theme-toggle [data-lucide="moon"] {
+        display: inline-flex;
+        width: 24px;
+        height: 24px;
+        stroke-width: 2px;
+        cursor: pointer;
+    }
+    
+    /* Para o toggle do header (não mobile), manter ambos ícones */
+    .header > .navbar > .theme-toggle [data-lucide="moon"],
+    .header > .navbar > .theme-toggle [data-lucide="sun"] {
+        display: inline-flex;
+    }
+    
+    .header > .navbar > .theme-toggle .form-check-input {
+        margin: 0 0.5rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .logo img {
+        height: 50px;
+    }
+}
+
+/* Para telas menores, esconder completamente quando o menu não está ativo */
+.nav-links:not(.active) .mobile-bottom-menu {
+    display: none;
+}
+
+/* Otimização de fontes para diferentes tamanhos de tela */
+@media (max-width: 768px) {
+    /* Ajuste de tamanho de fontes para tablets */
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+    
+    h3 {
+        font-size: 1.35rem;
+    }
+    
+    p {
+        font-size: 0.95rem;
+    }
+}
+
+/* Para telas muito pequenas */
+@media (max-width: 375px) {
+    .navbar {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .logo img {
+        height: 45px;
+    }
+    
+    /* Otimizar fontes e elementos para telas muito pequenas */
+    .mobile-menu-top a {
+        font-size: 0.95rem;
+        padding: 0.5rem 0;
+        margin: 0.3rem 0;
+    }
+    
+    .nav-links .mobile-menu-bottom {
+        margin-top: 1rem;
+    }
+    
+    .nav-links .mobile-menu-bottom .theme-toggle {
+        margin: 0.8rem 0 1.2rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .nav-links .mobile-menu-bottom .auth-buttons a {
+        padding: 0.7rem 1rem;
+        font-size: 0.8rem;
+        max-width: 180px;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 0.9rem;
+    }
+    
+    .section-heading h2 {
+        font-size: 1.5rem;
+    }
+    
+    .feature-card h3,
+    .use-case-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .feature-card p,
+    .use-case-card p {
+        font-size: 0.85rem;
+    }
+    
+    .pricing-card .price .amount {
+        font-size: 2.2rem;
+    }
+}
+
+body.light-theme .hero h1 {
+    color: #333333;
+    -webkit-text-fill-color: initial;
+    background: none;
+}
+
+body.light-theme .hero p {
+    color: #444444;
 }
 
 .switch input {
