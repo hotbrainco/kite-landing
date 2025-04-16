@@ -9,8 +9,8 @@
     --accent1: #FF6B6B;
     --accent2: #4ECDC4; 
     --accent3: #FFE66D;
-    --accent4: #6C63FF;
-    --accent5: #FF6584;
+    --accent4: #4D96FF;
+    --accent5: #5CE1E6;
     --gradient-rainbow: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3), var(--accent4), var(--accent5));
 }
 
@@ -35,12 +35,12 @@ a {
 
 .promo-banner {
     background: var(--gradient-rainbow);
-    color: var(--text);
+    color: white !important; /* Sempre branco em todos os temas */
     text-align: center;
     padding: 0.75rem;
     font-size: 0.9rem;
     animation: glow 2s infinite alternate;
-    text-shadow: 1px 1px #999;
+    text-shadow: 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes glow {
@@ -70,14 +70,32 @@ body.light-theme .header {
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
 }
 
-html.light-theme .logo img,
-body.light-theme .logo img {
-    filter: brightness(0);
+/* Controle de visibilidade dos logos baseado no tema */
+.logo-light {
+    display: none;
 }
 
-body.light-theme .footer-logo .logo-svg,
-body.light-theme .footer-logo img {
+.logo-dark {
+    display: block;
+}
+
+body.light-theme .logo-light {
+    display: block;
+}
+
+body.light-theme .logo-dark {
+    display: none;
+}
+
+/* Não aplique filtro em logos no tema light */
+html.light-theme .logo img,
+body.light-theme .logo img {
     filter: none;
+}
+
+/* Garantir que o logo do footer seja sempre colorido */
+.footer-logo img {
+    filter: none !important;
 }
 
 body.light-theme .feature-card {
@@ -91,6 +109,12 @@ body.light-theme .feature-card p {
 
 body.light-theme .feature-card-dark {
     background: #F0F2F5;
+    /* Preservar o padrão de fundo no tema light */
+    background-image: linear-gradient(45deg, transparent 25%, rgba(108, 99, 255, 0.05) 25%),
+                      linear-gradient(-45deg, transparent 25%, rgba(108, 99, 255, 0.05) 25%),
+                      linear-gradient(45deg, rgba(108, 99, 255, 0.05) 75%, transparent 75%),
+                      linear-gradient(-45deg, rgba(108, 99, 255, 0.05) 75%, transparent 75%);
+    background-size: 20px 20px;
 }
 
 body.light-theme .pricing-card {
@@ -292,6 +316,7 @@ body.light-theme a {
 .download-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(108, 99, 255, 0.3);
+    color: white !important; /* Manter o texto branco no hover */
 }
 
 .login-btn {
@@ -386,6 +411,7 @@ body.light-theme a {
 .cta-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(108, 99, 255, 0.3);
+    color: white !important; /* Manter o texto branco no hover */
 }
 
 .secondary-button {
@@ -408,6 +434,15 @@ body.light-theme a {
 .features {
     padding: 6rem 5%;
     background: var(--background-light);
+}
+
+/* Estilo para a seção de demonstração */
+section.demo-section {
+    padding: 6rem 5%;
+    background-color: #1e1e1e !important;
+    background-image: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .features-grid {
@@ -985,10 +1020,39 @@ body.light-theme .form-check-input:checked {
     border-color: var(--primary);
 }
 
+/* Estilo para a seção demo no light mode */
+body.light-theme section.demo-section {
+    background-color: #f5f7fa !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .demo-text h2 {
+    color: #333333;
+}
+
+body.light-theme .demo-text h2 span {
+    color: #4D96FF;
+}
+
+body.light-theme .demo-text p {
+    color: #555555;
+}
+
+body.light-theme .demo-feature span {
+    color: #444444;
+}
+
+body.light-theme .demo-icon {
+    color: var(--primary);
+}
+
 /* Corrigir contraste de botões no tema claro */
 body.light-theme .cta-button,
 body.light-theme .download-btn,
-body.light-theme .auth-buttons a {
+body.light-theme .auth-buttons a,
+body.light-theme .pricing-btn.featured,
+body.light-theme .pricing-btn:hover {
     color: white;
 }
 
@@ -1757,7 +1821,7 @@ body.light-theme .hero p {
 
 .pricing-btn:hover {
     background: var(--primary);
-    color: var(--text);
+    color: white !important; /* Manter o texto branco no hover */
     transform: translateY(-2px);
 }
 
@@ -1769,6 +1833,7 @@ body.light-theme .hero p {
 .pricing-btn.featured:hover {
     background: var(--primary-light);
     transform: translateY(-2px);
+    color: white !important; /* Manter o texto branco no hover */
 }
 
 .save-badge {
@@ -1807,12 +1872,15 @@ body.light-theme .hero p {
 }
 
 .demo-text h2 {
-    font-size: 2.2rem;
+    font-size: 2.25rem;
     color: var(--text);
-    margin-bottom: 1.25rem;
-    line-height: 1.2;
-    /* text-align: center; */
-    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    position: relative;
+}
+
+.demo-text h2 span {
+    color: #4D96FF;
 }
 
 .demo-text p {
@@ -1838,11 +1906,12 @@ body.light-theme .hero p {
 .demo-icon {
     width: 20px;
     height: 20px;
-    color: var(--primary);
-    background: var(--gradient-rainbow);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
+    color: #4D96FF;
+}
+
+/* Adicionar estilos específicos para o tema light */
+body.light-theme .demo-icon {
+    color: #4D96FF;
 }
 
 .demo-feature span {
@@ -2061,7 +2130,7 @@ body.light-theme .hero p {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text);
+    color: white !important; /* Sempre branco em todos os temas */
     font-weight: 600;
     font-size: 1rem;
 }
