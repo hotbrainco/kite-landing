@@ -418,5 +418,26 @@
     <script>
         lucide.createIcons();
     </script>
+    
+    <!-- Handle Stripe Checkout redirect when user clicks "Get Started" -->
+    <script>
+        document.getElementById('get-started').addEventListener('click', async function (e) {
+            e.preventDefault(); // prevent navigation to old href
+            
+            try {
+                const res = await fetch('/.netlify/functions/create-checkout', { method: 'POST' });
+                const data = await res.json();
+                
+                if (data.url) {
+                    window.location.href = data.url; // redirect to Stripe Checkout
+                } else {
+                    alert('Failed to start checkout. Please try again.');
+                }
+            } catch (err) {
+                console.error('Error during checkout:', err);
+                alert('Something went wrong. Please try again later.');
+            }
+        });
+    </script>
 </body>
 </html>
