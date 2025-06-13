@@ -1,4 +1,4 @@
-// Aplicar o tema imediatamente para evitar flash de estilo incorreto
+// Apply theme immediately to avoid incorrect style flash
 (function() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.classList.toggle('light-theme', savedTheme === 'light');
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (navLinks) navLinks.style.display = '';
     }
 
-    // Função para abrir o menu
+    // Function to open the menu
     const openMobileMenu = () => {
         menuToggle?.classList.add('active');
         navLinks?.classList.add('active');
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isMobileMenuOpen = true;
     };
     
-    // Função para fechar o menu
+    // Function to close the menu
     const closeMobileMenu = () => {
         menuToggle?.classList.remove('active');
         navLinks?.classList.remove('active');
@@ -44,20 +44,20 @@ document.addEventListener('DOMContentLoaded', function() {
         isMobileMenuOpen = false;
     };
     
-    // Listener para o botão de menu hamburger
+    // Listener for hamburger menu button
     menuToggle?.addEventListener('click', function(e) {
         e.stopPropagation();
         openMobileMenu();
     });
     
-    // Listener para o botão de fechar
+    // Listener for the close button
     const closeMenuBtn = document.querySelector('.close-menu-btn');
     closeMenuBtn?.addEventListener('click', function(e) {
         e.stopPropagation();
         closeMobileMenu();
     });
     
-    // Fechar o menu ao clicar em um link interno
+    // Close the menu when clicking an internal link
     const mobileMenuLinks = document.querySelectorAll('.nav-links a[href^="#"]');
     mobileMenuLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -158,8 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const updatePrices = (isAnnual) => {
             const cards = document.querySelectorAll('.pricing-card');
             const period = isAnnual ? 'annual' : 'monthly';
-            // Always show /month regardless of billing period
-            const periodText = '/month';
+            const periodText = isAnnual ? '/year' : '/month'; // Update period text dynamically
 
             cards.forEach(card => {
                 const price = card.dataset[`${period}Price`];
@@ -178,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update price and period
                 priceElement.textContent = price;
                 if (periodElement) {
-                    periodElement.textContent = periodText;
+                    periodElement.textContent = periodText; // Update period text
                     periodElement.style.display = 'inline';
                 }
             });
@@ -223,11 +222,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check for saved theme preference or use default (dark)
         const savedTheme = localStorage.getItem('theme') || 'dark';
         
-        // Limpar classes anteriores para garantir estado consistente
+        // Clean up previous classes to ensure consistent state
         document.documentElement.classList.remove('light-theme', 'dark-theme');
         document.body.classList.remove('light-theme', 'dark-theme');
         
-        // Aplicar o tema correto
+        // Apply the correct theme
         const theme = savedTheme === 'light' ? 'light' : 'dark';
         document.documentElement.classList.add(`${theme}-theme`);
         document.body.classList.add(`${theme}-theme`);
@@ -236,19 +235,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (toggle) toggle.checked = savedTheme === 'light';
         if (toggleMobile) toggleMobile.checked = savedTheme === 'light';
         
-        // Função para alternar o tema
+        // Function to switch the theme
         const toggleTheme = (isLightTheme) => {
             const newTheme = isLightTheme ? 'light' : 'dark';
             
-            // Limpar classes anteriores para evitar estados inconsistentes
+            // Clean up previous classes to avoid inconsistent states
             document.documentElement.classList.remove('light-theme', 'dark-theme');
             document.body.classList.remove('light-theme', 'dark-theme');
             
-            // Aplicar o tema correto em todo o documento
+            // Apply the correct theme throughout the document
             document.documentElement.classList.add(`${newTheme}-theme`);
             document.body.classList.add(`${newTheme}-theme`);
             
-            // Sincronizar os dois toggles
+            // Synchronize the two toggles
             if (toggle) toggle.checked = isLightTheme;
             if (toggleMobile) toggleMobile.checked = isLightTheme;
             
@@ -345,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize Lucide icons
     lucide.createIcons();
     
-    // Reaplicar o tema após carregamento da página para garantir consistência
+    // Reapply theme after page load to ensure consistency
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.classList.toggle('light-theme', savedTheme === 'light');
     document.body.classList.toggle('light-theme', savedTheme === 'light');
