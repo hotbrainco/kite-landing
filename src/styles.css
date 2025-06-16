@@ -1786,26 +1786,6 @@ body.light-theme .hero p {
     margin-left: 0.1rem;
 }
 
-.pricing-features {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 2rem 0;
-    text-align: left;
-}
-
-.pricing-features li {
-    color: var(--text-light);
-    margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-}
-
-.pricing-features li i {
-    color: var(--primary);
-}
-
 .pricing-btn {
     width: 100%;
     padding: 1rem;
@@ -2582,24 +2562,6 @@ body.light-theme .demo-icon {
     opacity: 0.7;
 }
 
-.pricing-features {
-    list-style: none;
-    margin-bottom: 2rem;
-}
-
-.pricing-features li {
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    color: var(--text-light);
-}
-
-.pricing-features li i {
-    color: var(--primary);
-    margin-right: 10px;
-    flex-shrink: 0;
-}
-
 .pricing-btn {
     display: inline-block;
     width: 100%;
@@ -2992,4 +2954,28 @@ body.light-theme .demo-icon {
         flex-direction: column;
         gap: 0.5rem;
     }
+}
+
+.checkmark-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    text-align: left;
+}
+
+ul.checkmark-list {
+    padding-left: 0;
+}
+
+.checkmark-list li {
+    color: var(--text-light);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.checkmark-list li i {
+    color: var(--primary);
 }
