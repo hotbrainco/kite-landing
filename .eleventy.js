@@ -4,7 +4,8 @@ export default function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/styles.css");
   eleventyConfig.addPassthroughCopy("src/script.js");
   eleventyConfig.addPassthroughCopy("src/logo.png");
-  eleventyConfig.addPassthroughCopy("src/.netlify");
+  // Remove this line since .netlify should stay in root
+  // eleventyConfig.addPassthroughCopy("src/.netlify");
 
   return {
     dir: {
