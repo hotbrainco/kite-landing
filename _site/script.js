@@ -1,6 +1,6 @@
 // Apply theme immediately to avoid incorrect style flash
 (function() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const savedTheme = localStorage.getItem('theme') || 'light'; // Changed from 'dark' to 'light'
     document.documentElement.classList.toggle('light-theme', savedTheme === 'light');
     document.body.classList.toggle('light-theme', savedTheme === 'light');
 })();
@@ -219,8 +219,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!toggle && !toggleMobile) return;
         
-        // Check for saved theme preference or use default (dark)
-        const savedTheme = localStorage.getItem('theme') || 'dark';
+        // Check for saved theme preference or use default (light)
+        const savedTheme = localStorage.getItem('theme') || 'light'; // Changed from 'dark' to 'light'
         
         // Clean up previous classes to ensure consistent state
         document.documentElement.classList.remove('light-theme', 'dark-theme');
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.classList.add(`${theme}-theme`);
         document.body.classList.add(`${theme}-theme`);
         
-        // Update toggle states to match current theme
+        // Update toggle states to match current theme (light = checked)
         if (toggle) toggle.checked = savedTheme === 'light';
         if (toggleMobile) toggleMobile.checked = savedTheme === 'light';
         
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
     
     // Reapply theme after page load to ensure consistency
-    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const savedTheme = localStorage.getItem('theme') || 'light'; // Changed from 'dark' to 'light'
     document.documentElement.classList.toggle('light-theme', savedTheme === 'light');
     document.body.classList.toggle('light-theme', savedTheme === 'light');
 });
