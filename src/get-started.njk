@@ -1,0 +1,99 @@
+---
+layout: base.njk
+title: "Get Started - Kite"
+---
+
+<section class="get-started-section">
+    <div class="get-started-content">
+        <div class="form-container">
+            <div class="form-heading">
+                <h1>Get Started with Kite</h1>
+                <p>Fill out the form below and our team will get in touch with you to discuss how Kite can help your church grow.</p>
+            </div>
+            
+            <form id="contact-form" name="kite-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                <p class="hidden" style="display: none;">
+                    <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+                </p>
+                <input type="hidden" name="form-name" value="kite-contact" />
+                
+                <div class="form-group">
+                    <label for="name">Your Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="church">Church Name *</label>
+                    <input type="text" id="church" name="church" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Your Role</label>
+                    <select id="role" name="role">
+                        <option value="" disabled selected>Select your role</option>
+                        <option value="Pastor">Pastor</option>
+                        <option value="Associate Pastor">Associate Pastor</option>
+                        <option value="Communications Director">Communications Director</option>
+                        <option value="Technical Director">Technical Director</option>
+                        <option value="Administrator">Administrator</option>
+                        <option value="BoardMember">Board Member or Elder</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="size">Church Size</label>
+                    <select id="size" name="size">
+                        <option value="" disabled selected>Select church size</option>
+                        <option value="Under 100">Under 100</option>
+                        <option value="100-250">100-250</option>
+                        <option value="251-500">251–1,000</option>
+                        <option value="1001-2500">1,001-2,500</option>
+                        <option value="2500+">2,500+</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="needs">What are you looking for help with?</label>
+                    <select id="needs" name="needs">
+                        <option value="" disabled selected>Select your primary need</option>
+                        <option value="Website Design">Website Design</option>
+                        <option value="Podcast Hosting">Podcast Hosting</option>
+                        <option value="YouTube Integration">YouTube Integration</option>
+                        <option value="Events Management">Events Management</option>
+                        <option value="Payment Processing">Payment Processing</option>
+                        <option value="Community Management">Community Newsletter</option>
+                        <option value="Multiple Needs">Multiple Needs</option>
+                        <option value="Not Sure">Not Sure</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Additional Information</label>
+                    <textarea id="message" name="message" placeholder="Tell us more about your church and what you're looking for..."></textarea>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="newsletter" name="newsletter" checked>
+                    <label for="newsletter">I'd like to receive updates, tips, and special offers from Kite.</label>
+                </div>
+                
+                <button type="submit" class="submit-btn">Submit Request</button>
+                
+                <div class="form-footer">
+                    <p>By submitting this form, you agree to our <a href="/terms-and-privacy/#privacy-content">Privacy Policy</a> and <a href="/terms-and-privacy/">Terms of Service</a>.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
