@@ -1,4 +1,3 @@
-// This is your Netlify Function (backend in disguise)
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
 exports.handler = async (event) => {
@@ -8,22 +7,37 @@ exports.handler = async (event) => {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: 'price_1RYqyXFBc7hwldVNVztMCcMe', // Your Stripe price ID
+          price: 'price_1RYqyXFBc7hwldVNVztMCcMe', // Your actual working price ID
           quantity: 1,
         },
       ],
-      success_url: 'https://churchkite.com',
-      cancel_url: 'https://churchkite.com',
+      success_url: 'https://churchkite.com/success',
+      cancel_url: 'https://churchkite.com/canceled',
     });
 
     return {
       statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: session.url }),
     };
   } catch (error) {
+    console.error('❌ Stripe Checkout Session Error:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      param: error.param,
+      raw: error.raw,
+    });
+
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
+      statusCode: 400,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        error: error.message || 'Unknown error during checkout',
+        type: error.type || 'UnknownType',
+        code: error.code || 'UnknownCode',
+        param: error.param || null,
+      }),
     };
   }
 };
