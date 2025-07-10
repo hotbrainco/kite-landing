@@ -33,6 +33,30 @@ a {
     text-decoration: none;
 }
 
+/* Load League Spartan Extra Bold */
+@font-face {
+  font-family: 'League Spartan';
+  src: url('/assets/fonts/LeagueSpartan-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Use it for your logo text only */
+.logo-font {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 800;
+  font-size: 2.5em;
+  margin-top: 4px;
+}
+
+.logo a {
+  display: flex;              /* Arrange children horizontally */
+  align-items: center;        /* Vertically center icon and text */
+  gap: 0.4em;                 /* Optional spacing between icon and text */
+  text-decoration: none;      /* Optional: remove underline */
+}
+
 .promo-banner {
     background: var(--gradient-rainbow);
     color: black !important; /* Sempre branco em todos os temas */
@@ -71,30 +95,33 @@ body.light-theme .header {
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Controle de visibilidade dos logos baseado no tema */
+/* Theme-based logo visibility control */
 .logo-light {
     display: none;
 }
 
 .logo-dark {
-    display: block;
+    /* default inline styling */
+    /* display: block; */
 }
 
 body.light-theme .logo-light {
-    display: block;
+    /* default inline styling */
+    /* display: block; */
+    display: inline;
 }
 
 body.light-theme .logo-dark {
     display: none;
 }
 
-/* Não aplique filtro em logos no tema light */
+/* Do not apply filter to logos in light theme */
 html.light-theme .logo img,
 body.light-theme .logo img {
     filter: none;
 }
 
-/* Garantir que o logo do footer seja sempre colorido */
+/* Ensure that the footer logo is always in color */
 .footer-logo img {
     filter: none !important;
 }
@@ -167,7 +194,7 @@ body.light-theme .social-icon {
 }
 
 body.light-theme a {
-    color: #6C63FF;
+    color: var(--primary);
 }
 
 .header {
@@ -183,7 +210,7 @@ body.light-theme a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 5%;
+    padding: 1rem 4%;
     max-width: 1300px;
     margin: 0 auto;
     flex-wrap: nowrap;
@@ -200,9 +227,9 @@ body.light-theme a {
     opacity:0.9;
 }
 
-.logo img:hover {
-    transform: scale(1.05);
-    opacity: 1;
+.logo:hover img {
+  transform: scale(1.05);
+  opacity: 1;
 }
 
 .logo img.logo-footer {
@@ -1627,6 +1654,10 @@ body.light-theme .hero h1 {
     -webkit-text-stroke: 1px black;
 }
 
+body.dark-theme .hero h1 {
+    -webkit-text-stroke: 1px white;
+}
+
 body.light-theme .hero p {
     color: #444444;
 }
@@ -1722,6 +1753,10 @@ body.light-theme .hero p {
     margin-bottom: 2rem;
     position: relative;
     padding-top: 1.5rem;
+}
+
+.price-setup {
+    margin-bottom: 10px;
 }
 
 .price {
@@ -1859,8 +1894,9 @@ body.light-theme .hero p {
     position: relative;
 }
 
-.demo-text h2 span {
-    color: #4D96FF;
+.demo-text h3 {
+    font-weight: bold;
+    color: var(--primary);
 }
 
 .demo-text p {
@@ -2456,7 +2492,7 @@ body.light-theme .demo-icon {
 
 .pricing p {
     font-size: 1.1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
     color: var(--text-light);
     max-width: 700px;
     margin-left: auto;
@@ -2486,7 +2522,7 @@ body.light-theme .demo-icon {
     display: inline-block;
     padding: 0.2rem 0.5rem;
     background: var(--accent3);
-    color: var(--background);
+    color: #333;
     border-radius: 4px;
     font-size: 0.8rem;
     font-weight: 600;
