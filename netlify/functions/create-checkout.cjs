@@ -2,14 +2,30 @@ const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
 console.log("✅ STRIPE_API_KEY:", process.env.STRIPE_API_KEY ? "Loaded" : "NOT FOUND");
 
+const priceMap = {
+  default: 'price_1RYqyXFBc7hwldVNVztMCcMe', // original/standard offer
+  promoA: 'price_xxx_promoA', // replace with real Stripe Price ID
+  promoB: 'price_yyy_promoB', // replace with real Stripe Price ID
+};
+
 exports.handler = async (event) => {
   try {
+    const { plan = 'default' } = JSON.parse(event.body || '{}');
+    const priceId = priceMap[plan];
+
+    if (!priceId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid plan specified' }),
+      };
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [
         {
-          price: 'price_1RYqyXFBc7hwldVNVztMCcMe', // Your actual working price ID
+          price: priceId,
           quantity: 1,
         },
       ],
