@@ -1,5 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
+console.log("✅ STRIPE_API_KEY:", process.env.STRIPE_API_KEY ? "Loaded" : "NOT FOUND");
+
 exports.handler = async (event) => {
   try {
     const session = await stripe.checkout.sessions.create({
