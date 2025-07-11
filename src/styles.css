@@ -2537,6 +2537,12 @@ body.light-theme .demo-icon {
     margin: 0 auto;
 }
 
+/* When needing 3 column pricing cards */
+.promo-grid {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 1200px;
+}
+
 .pricing-card {
     background: var(--background);
     border-radius: 12px;
