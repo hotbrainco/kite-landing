@@ -23,18 +23,25 @@ exports.handler = async (event) => {
   }
 
   try {
+    
+    const setupFeePriceMap = {
+      monthly: 'price_1RkuvfFBc7hwldVNO6eoFrCN', // Setup fee for monthly
+      annual: 'price_1RkulYFBc7hwldVNmNlB1zkJ',  // Setup fee for annual
+    };
+
+    const setupFeePrice = setupFeePriceMap[interval];
+
     // Define your Stripe price IDs
     const recurringPriceMap = {
       monthly: 'price_1RktKRFBc7hwldVNQVDEPELh', // Monthly subscription
       annual: 'price_1RktLMFBc7hwldVN0TBQhz9T',  // Annual subscription
     };
-    const setupFeePrice = 'price_1RkulYFBc7hwldVNmNlB1zkJ'; // One-time setup fee
-
+    
     // Get the correct recurring price ID based on input
     const recurringPrice = recurringPriceMap[interval];
 
     // Validate interval choice
-    if (!recurringPrice) {
+    if (!recurringPrice || !setupFeePrice) {
       throw new Error('Invalid subscription interval provided.');
     }
 
