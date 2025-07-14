@@ -4,44 +4,34 @@ title: "Kite - The Website & Communications Platform for Churches"
 scripts: |
   <!-- Handle Stripe Checkout redirect when user clicks "Get Started" -->
   <script>
-  // Wait until the DOM is fully loaded
-  document.addEventListener('DOMContentLoaded', function () {
-    // Select all buttons with class "get-started" (you can have more than one on the page)
-    const buttons = document.querySelectorAll('.get-started');
-
-    buttons.forEach((button) => {
-      button.addEventListener('click', async function (e) {
-        e.preventDefault(); // Prevent default link behavior
-
-        // Get the data-plan value from the clicked button (e.g., "promoA" or "promoB")
-        const selectedPlan = this.getAttribute('data-plan');
-
-        try {
-          // Send a POST request to your Netlify function with the selected plan in the body
-          const res = await fetch('/.netlify/functions/create-checkout', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ plan: selectedPlan }),
-          });
-
-          const data = await res.json();
-
-          if (data.url) {
-            // Redirect the user to the Stripe Checkout page
-            window.location.href = data.url;
-          } else {
-            // If no URL was returned, show a user-friendly error
-            alert('Failed to start checkout. Please try again.');
-          }
-        } catch (err) {
-          // Catch any unexpected errors (network, etc.)
-          console.error('Error during checkout:', err);
-          alert('Something went wrong. Please try again later.');
-        }
+  // Function to create a Checkout session by calling the Netlify function
+  const createCheckoutSession = async (interval) => {
+    try {
+      const res = await fetch('/.netlify/functions/create-checkout', {
+        method: 'POST',
+        body: JSON.stringify({ interval }),
       });
-    });
+
+      const data = await res.json();
+
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'An error occurred while creating the checkout session.');
+      }
+    } catch (err) {
+      alert('Network error or invalid response from server.');
+    }
+  };
+
+  // Add event listeners to subscription buttons
+  document.getElementById('get-started-monthly')?.addEventListener('click', () => {
+    createCheckoutSession('monthly');
+  });
+
+  document.getElementById('get-started-annual')?.addEventListener('click', () => {
+    createCheckoutSession('annual');
   });
   </script>
 ---
