@@ -70,7 +70,7 @@ exports.handler = async (event) => {
     // ✅ Apply discount only if user chose monthly
     if (interval === 'monthly') {
       sessionParams.discounts = [
-        { promotion_code: 'promo_1RkvAkFBc7hwldVNfD6Rb6pe' }
+        { promotion_code: 'promo_1RkvIoFBc7hwldVNlohm4ny3' }
       ];
     }
 
