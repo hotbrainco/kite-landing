@@ -44,11 +44,11 @@ exports.handler = async (event) => {
       mode: 'subscription',
       line_items: [
         {
-          price: recurringPrice, // Monthly or Annual
+          price: setupFeePrice, // Setup fee
           quantity: 1,
         },
         {
-          price: setupFeePrice, // Setup fee
+          price: recurringPrice, // Monthly or Annual
           quantity: 1,
         },
       ],
