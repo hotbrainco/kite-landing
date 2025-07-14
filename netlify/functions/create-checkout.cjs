@@ -2,10 +2,27 @@
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
 exports.handler = async (event) => {
-  try {
-    // Parse the selected billing interval from frontend ('monthly' or 'annual')
-    const { interval } = JSON.parse(event.body);
+  // 🚫 Reject any non-POST requests
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method Not Allowed' }),
+    };
+  }
 
+  let interval;
+
+  // ✅ Safely parse the JSON body
+  try {
+    ({ interval } = JSON.parse(event.body));
+  } catch {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid or missing JSON body' }),
+    };
+  }
+
+  try {
     // Define your Stripe price IDs
     const recurringPriceMap = {
       monthly: 'price_1RktKRFBc7hwldVNQVDEPELh', // Monthly subscription
@@ -42,13 +59,13 @@ exports.handler = async (event) => {
       cancel_url: 'https://churchkite.com/cancel',
     });
 
-    // Return the Stripe checkout session URL to the frontend
+    // ✅ Return the Stripe checkout session URL to the frontend
     return {
       statusCode: 200,
       body: JSON.stringify({ url: session.url }),
     };
   } catch (error) {
-    // Handle and return any errors that occur
+    // ❌ Handle and return any errors that occur
     return {
       statusCode: 400,
       body: JSON.stringify({ error: error.message }),

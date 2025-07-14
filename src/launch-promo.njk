@@ -3,36 +3,35 @@ layout: base.njk
 title: "Kite - The Website & Communications Platform for Churches"
 scripts: |
   <!-- Handle Stripe Checkout redirect when user clicks "Get Started" -->
+  <!-- Handle Stripe Checkout redirect when user clicks "Get Started" -->
   <script>
-  // Function to create a Checkout session by calling the Netlify function
-  const createCheckoutSession = async (interval) => {
-    try {
-      const res = await fetch('/.netlify/functions/create-checkout', {
-        method: 'POST',
-        body: JSON.stringify({ interval }),
-      });
+    const createCheckoutSession = async (interval) => {
+      try {
+        const res = await fetch('/.netlify/functions/create-checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ interval }),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (data.url) {
-        // Redirect to Stripe Checkout
-        window.location.href = data.url;
-      } else {
-        alert(data.error || 'An error occurred while creating the checkout session.');
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert(data.error || 'An error occurred while creating the checkout session.');
+        }
+      } catch (err) {
+        alert('Network error or invalid response from server.');
       }
-    } catch (err) {
-      alert('Network error or invalid response from server.');
-    }
-  };
+    };
 
-  // Add event listeners to subscription buttons
-  document.getElementById('get-started-monthly')?.addEventListener('click', () => {
-    createCheckoutSession('monthly');
-  });
+    document.getElementById('get-started-monthly')
+      ?.addEventListener('click', () => createCheckoutSession('monthly'));
 
-  document.getElementById('get-started-annual')?.addEventListener('click', () => {
-    createCheckoutSession('annual');
-  });
+    document.getElementById('get-started-annual')
+      ?.addEventListener('click', () => createCheckoutSession('annual'));
   </script>
 ---
 
