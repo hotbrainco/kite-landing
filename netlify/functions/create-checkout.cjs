@@ -36,7 +36,7 @@ exports.handler = async (event) => {
       monthly: 'price_1RktKRFBc7hwldVNQVDEPELh', // Monthly subscription
       annual: 'price_1RktLMFBc7hwldVN0TBQhz9T',  // Annual subscription
     };
-    
+
     // Get the correct recurring price ID based on input
     const recurringPrice = recurringPriceMap[interval];
 
@@ -46,7 +46,7 @@ exports.handler = async (event) => {
     }
 
     // Create Stripe Checkout session
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams = {
       payment_method_types: ['card'],
       mode: 'subscription',
       line_items: [
@@ -64,7 +64,16 @@ exports.handler = async (event) => {
       },
       success_url: 'https://churchkite.com/success?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://churchkite.com/cancel',
-    });
+    };
+
+    // ✅ Apply discount only if user chose monthly
+    if (interval === 'monthly') {
+      sessionParams.discounts = [
+        { promotion_code: 'promo_1RkvAkFBc7hwldVNfD6Rb6pe' }
+      ];
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     // ✅ Return the Stripe checkout session URL to the frontend
     return {
