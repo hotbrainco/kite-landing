@@ -25,7 +25,8 @@ exports.handler = async (event) => {
   try {
     
     const setupFeePriceMap = {
-      monthly: 'price_1RkuvfFBc7hwldVNO6eoFrCN', // Setup fee for monthly
+      // monthly: 'price_1RkuvfFBc7hwldVNO6eoFrCN', // Setup fee for monthly
+      monthly: 'price_1RkulYFBc7hwldVNmNlB1zkJ', // Setup fee for monthly, testing promo (same as annual)
       annual: 'price_1RkulYFBc7hwldVNmNlB1zkJ',  // Setup fee for annual
     };
 
