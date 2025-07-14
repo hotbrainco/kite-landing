@@ -11,7 +11,7 @@ exports.handler = async (event) => {
       monthly: 'price_1RktKRFBc7hwldVNQVDEPELh', // Monthly subscription
       annual: 'price_1RktLMFBc7hwldVN0TBQhz9T',  // Annual subscription
     };
-    const setupFeePrice = 'price_1RktK5FBc7hwldVN14Zr1Ydw'; // One-time setup fee
+    const setupFeePrice = 'price_1RjXj0FBc7hwldVN9qbHGksE'; // One-time setup fee
 
     // Get the correct recurring price ID based on input
     const recurringPrice = recurringPriceMap[interval];
