@@ -36,7 +36,7 @@ exports.handler = async (event) => {
         },
       ],
       subscription_data: {
-        trial_period_days: 30, // 1-month free trial
+        trial_period_days: interval === 'annual' ? 365 : 30,
       },
       success_url: 'https://churchkite.com/success?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://churchkite.com/cancel',
