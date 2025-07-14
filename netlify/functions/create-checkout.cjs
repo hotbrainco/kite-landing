@@ -1,61 +1,57 @@
-const stripe = require('stripe')(process.env.STRIPE_API_KEY);
-
-console.log("✅ STRIPE_API_KEY:", process.env.STRIPE_API_KEY ? "Loaded" : "NOT FOUND");
-
-const priceMap = {
-  default: 'price_1RYqyXFBc7hwldVNVztMCcMe', // original/standard offer
-  promoA: 'price_xxx_promoA', // replace with real Stripe Price ID
-  promoB: 'price_yyy_promoB', // replace with real Stripe Price ID
-};
+// Load Stripe with secret key from environment variable
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.handler = async (event) => {
   try {
-    const { plan = 'default' } = JSON.parse(event.body || '{}');
-    const priceId = priceMap[plan];
+    // Parse the selected billing interval from frontend ('monthly' or 'annual')
+    const { interval } = JSON.parse(event.body);
 
-    if (!priceId) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Invalid plan specified' }),
-      };
+    // Define your Stripe price IDs
+    const recurringPriceMap = {
+      monthly: 'price_1RktKRFBc7hwldVNQVDEPELh', // Monthly subscription
+      annual: 'price_1RktLMFBc7hwldVN0TBQhz9T',  // Annual subscription
+    };
+    const setupFeePrice = 'price_1RktK5FBc7hwldVN14Zr1Ydw'; // One-time setup fee
+
+    // Get the correct recurring price ID based on input
+    const recurringPrice = recurringPriceMap[interval];
+
+    // Validate interval choice
+    if (!recurringPrice) {
+      throw new Error('Invalid subscription interval provided.');
     }
 
+    // Create Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
       payment_method_types: ['card'],
+      mode: 'subscription',
       line_items: [
         {
-          price: priceId,
+          price: recurringPrice, // Monthly or Annual
+          quantity: 1,
+        },
+        {
+          price: setupFeePrice, // Setup fee
           quantity: 1,
         },
       ],
-      success_url: 'https://churchkite.com/success',
-      cancel_url: 'https://churchkite.com/canceled',
+      subscription_data: {
+        trial_period_days: 30, // 1-month free trial
+      },
+      success_url: 'https://churchkite.com/success?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'https://churchkite.com/cancel',
     });
 
+    // Return the Stripe checkout session URL to the frontend
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: session.url }),
     };
   } catch (error) {
-    console.error('❌ Stripe Checkout Session Error:', {
-      message: error.message,
-      type: error.type,
-      code: error.code,
-      param: error.param,
-      raw: error.raw,
-    });
-
+    // Handle and return any errors that occur
     return {
       statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        error: error.message || 'Unknown error during checkout',
-        type: error.type || 'UnknownType',
-        code: error.code || 'UnknownCode',
-        param: error.param || null,
-      }),
+      body: JSON.stringify({ error: error.message }),
     };
   }
 };
