@@ -70,15 +70,20 @@ exports.handler = async (event) => {
     // ✅ Apply discounts
     // Map promotion codes by plan type
     const promotionCodeMap = {
-      monthly: 'promo_1RkwpAFBc7hwldVNC2lszIjC',
-      annual: 'promo_1RkwoPFBc7hwldVN1kqmowdG',
+      monthly: [
+        'promo_1RkvAkFBc7hwldVNfD6Rb6pe',
+        'promo_1RkwtrFBc7hwldVNhA31P7at',
+      ],
+      annual: [
+        'promo_1RkvxxFBc7hwldVNiEyItNTe',
+      ],
     };
 
-    const promotionCode = promotionCodeMap[interval];
-    if (promotionCode) {
-      sessionParams.discounts = [
-        { promotion_code: promotionCode }
-      ];
+    const promotionCodes = promotionCodeMap[interval];
+    if (promotionCodes?.length) {
+      sessionParams.discounts = promotionCodes.map((code) => ({
+        promotion_code: code,
+      }));
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
