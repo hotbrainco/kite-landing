@@ -67,10 +67,17 @@ exports.handler = async (event) => {
       cancel_url: 'https://churchkite.com/cancel',
     };
 
-    // ✅ Apply discount only if user chose monthly
-    if (interval === 'monthly') {
+    // ✅ Apply discounts
+    // Map promotion codes by plan type
+    const promotionCodeMap = {
+      monthly: 'promo_1RkvAkFBc7hwldVNfD6Rb6pe',
+      annual: 'promo_1RkvxxFBc7hwldVNiEyItNTe',
+    };
+
+    const promotionCode = promotionCodeMap[interval];
+    if (promotionCode) {
       sessionParams.discounts = [
-        { promotion_code: 'promo_1RkvIoFBc7hwldVNlohm4ny3' }
+        { promotion_code: promotionCode }
       ];
     }
 
