@@ -60,12 +60,16 @@ exports.handler = async (event) => {
           quantity: 1,
         },
       ],
-      subscription_data: {
-        trial_period_days: interval === 'annual' ? 365 : 30,
-      },
       success_url: 'https://churchkite.com/success?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://churchkite.com/cancel',
     };
+
+    // ✅ Only add trial for annual plan
+    if (interval === 'annual') {
+      sessionParams.subscription_data = {
+        trial_period_days: 365,
+      };
+    }
 
     // ✅ Apply discounts
     // Map promotion codes by plan type
