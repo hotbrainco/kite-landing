@@ -70,8 +70,8 @@ exports.handler = async (event) => {
     // ✅ Apply discounts
     // Map promotion codes by plan type
     const promotionCodeMap = {
-      monthly: 'promo_1RkvAkFBc7hwldVNfD6Rb6pe',
-      annual: 'promo_1RkvxxFBc7hwldVNiEyItNTe',
+      monthly: 'promo_1RkwpAFBc7hwldVNC2lszIjC',
+      annual: 'promo_1RkwoPFBc7hwldVN1kqmowdG',
     };
 
     const promotionCode = promotionCodeMap[interval];
