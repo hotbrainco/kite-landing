@@ -1,7 +1,7 @@
 // src/js/checkout.js
 
 document.addEventListener('DOMContentLoaded', () => {
-  const stripe = Stripe('pk_test_51PLa3sRxH27c33aA6z5a1O3sJ4g9b8a7c6d5e4f3g2h1i0j'); // Replace with your actual publishable key
+  const stripe = Stripe(STRIPE_PUBLISHABLE_KEY); // Use the global variable
   const elements = stripe.elements();
 
   const style = {

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "dotenv": "^17.2.0",
     "stripe": "^18.2.1"
   },
   "devDependencies": {

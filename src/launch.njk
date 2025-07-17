@@ -2,6 +2,9 @@
 layout: base.njk
 title: "Kite - The Website & Communications Platform for Churches"
 scripts: |
+  <script>
+    const STRIPE_PUBLISHABLE_KEY = "{{ env.stripePublishableKey }}";
+  </script>
   <script src="https://js.stripe.com/v3/"></script>
   <script src="/js/checkout.js" defer></script>
 ---
