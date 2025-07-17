@@ -1,0 +1,491 @@
+---
+layout: base.njk
+title: "Kite - The Website & Communications Platform for Churches"
+scripts: |
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="/js/checkout.js" defer></script>
+---
+
+<style>
+/* Slide-in Checkout Panel Styles */
+.checkout-panel {
+  position: fixed;
+  top: 0;
+  right: -400px; /* Start off-screen */
+  width: 400px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.checkout-panel.open {
+  right: 0; /* Slide in */
+}
+
+.checkout-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.checkout-panel-header h3 {
+  margin: 0;
+}
+
+#close-checkout {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+#checkout-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.form-row {
+  margin-bottom: 20px;
+}
+
+#card-element {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+#card-errors {
+  color: #fa755a;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+#checkout-form button {
+  margin-top: auto; /* Pushes button to the bottom */
+  padding: 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#checkout-form button:disabled {
+  background-color: #aab7c4;
+}
+</style>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>All-in-One Website +<br>Communications Platform for Churches.</h1>
+        <!--h3>Kite brings a suite of robust tools under one roof. Discover cost and time savings while opening up new possibilies!</h3-->
+        <div class="hero-buttons">
+            <a href="#pricing" class="cta-button">Get Started</a>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="features">
+    <h2>Core Features</h2>
+    <div class="features-grid">
+        <div class="feature-card feature-card-dark">
+            <i data-lucide="layout" class="feature-icon"></i>
+            <h3>Website</h3>
+            <p>A powerful, fast and mobile responsive church website with Ministries, Missions, Team, Directions and much more!</p>
+        </div>
+        <div class="feature-card">
+            <i data-lucide="calendar" class="feature-icon"></i>
+            <h3>Events Management</h3>
+            <p>Create, promote, and manage all your church events with our powerful tools. Includes Registrations, including paid events via our Square integration.</p>
+        </div>
+        <div class="feature-card">
+            <i data-lucide="mail-check" class="feature-icon"></i>
+            <h3>Email Newsletters</h3>
+            <p>Build and nurture your church community with integrated subscription forms and email newsletters.</p>
+        </div>
+        <div class="feature-card">
+            <i data-lucide="video" class="feature-icon"></i>
+            <h3>YouTube Integration</h3>
+            <p>Seamlessly connect your YouTube channel to display your video library directly on your church website.</p>
+        </div>
+        <div class="feature-card">
+            <i data-lucide="mic" class="feature-icon"></i>
+            <h3>Podcast Hosting</h3>
+            <p>Share your sermons and discussions with integrated podcast hosting that distributes to all major platforms.</p>
+        </div>
+        <div class="feature-card">
+            <i data-lucide="users" class="feature-icon"></i>
+            <h3>Admin-Friendly <i data-lucide="check"></i><i data-lucide="check"></i><i data-lucide="check"></i></h3>
+            <p>Get more done in less time. Add and remove users, schedule updates, find everything in one easy-to-use platform.</p>
+        </div>
+    </div>
+</section>
+
+<section class="demo-section">
+    <div class="demo-content">
+        <div class="demo-text">
+            <h3><span>Engage</span> with Your Community Easily!</h3>
+            <p>Remove barriers to connecting with your community in meaningful ways.</p>
+            <div class="demo-features">
+                <div class="demo-feature">
+                    <i data-lucide="check" class="demo-icon"></i>
+                    <span>Mobile-friendly</span>
+                </div>
+                <div class="demo-feature">
+                    <i data-lucide="check" class="demo-icon"></i>
+                    <span>Powerful, integrated features</span>
+                </div>
+                <div class="demo-feature">
+                    <i data-lucide="check" class="demo-icon"></i>
+                    <span>Fast and powerful performance</span>
+                </div>
+                <div class="demo-feature">
+                    <i data-lucide="check" class="demo-icon"></i>
+                    <span>Advanced customization possibilities</span>
+                </div>
+            </div>
+        </div>
+        <div class="demo-image">
+            <img src="/assets/images/church-website-homepage-demo-1.webp">
+        </div>
+    </div>
+</section>
+
+<section id="use-cases" class="use-cases">
+    <h2>Serving Ministries of All Sizes</h2>
+    <div class="use-cases-grid">
+        <div class="use-case-card">
+            <i data-lucide="home" class="use-case-icon"></i>
+            <h3>Small</h3>
+            <p>Affordable solutions to help small congregations build an impactful online presence</p>
+        </div>
+        <div class="use-case-card">
+            <i data-lucide="building" class="use-case-icon"></i>
+            <h3>Mid-sized</h3>
+            <p>Scalable tools that grow with your community's needs</p>
+        </div>
+        <div class="use-case-card">
+            <i data-lucide="landmark" class="use-case-icon"></i>
+            <h3>Large</h3>
+            <p>Enterprise-level solutions for multi-campus churches and complex operations</p>
+        </div>
+        <div class="use-case-card">
+            <i data-lucide="globe" class="use-case-icon"></i>
+            <h3>Parachurch</h3>
+            <p>Tools designed for churches focusing on specific goals and/or digital outreach.</p>
+        </div>
+    </div>
+</section>
+
+{#
+<!-- New 2 Column Promo Section -->
+<section class="pricing" id="pricing">
+  <h2>Choose Your Plan</h2>
+  <p class="pricing-subtitle">Public Launch Promotion! Choose From the Following Options:</p>
+
+  <div class="pricing-layout">
+    <!-- Left 1/3 column -->
+    <div class="pricing-left">
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>All Plans Include:</h3>
+          <!--p class="price-setup">We’ve designed these options to meet most common needs, but you can always start small and grow later!</p-->
+        </div>
+        <ul class="checkmark-list">
+          <li><i data-lucide="check"></i> Access to All Modules</li>
+          <li><i data-lucide="check"></i> <strong>Unlimited:</strong></li>
+          <li style="margin-left:30px">▸ Pages</li>
+          <li style="margin-left:30px">▸ Users</li>
+          <li style="margin-left:30px">▸ Events (and Registrants)</li>
+          <li style="margin-left:30px">▸ Videos from YouTube Channel</li>
+          <li style="margin-left:30px">▸ Newsletter Subscribers</li>
+          <li style="margin-left:30px">▸ Team Members</li>
+          <li style="margin-left:30px">▸ Podcast Episodes</li>
+        <li><i data-lucide="check"></i> Add, Ministries, Missions Partners, Team, and More!</li>
+				<li><i data-lucide="check"></i> Free & Paid Events with Multiple Ticket Types</li>
+        <li><i data-lucide="check"></i> YouTube Channel Integration</li>
+        <li><i data-lucide="check"></i> Regular Platform Updates</li>
+        <li><i data-lucide="check"></i> Daily Backups</li>
+        <li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
+        <li><i data-lucide="check"></i> Rock-Star Support!</li>
+        <li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
+      </ul>
+       <p style="font-size:0.85em; margin-top:2em">*Includes 25GB storage. Add more @ $5/month per 10GB.</p>
+      </div>
+    </div>
+
+    <!-- Right 2/3 column: Three stacked plans -->
+    <div class="pricing-right">
+      <!-- Promo A -- Annual Plan -->
+			<div class="pricing-card">
+				<div class="pricing-header">
+					<div class="popular-badge">Best Value 🎉</div>
+					<h3 class="amount">Unlimited Plan ‣ Annual</h3>
+					<p class="price-setup"><s>$499</s> <strong>$0</strong> Setup Fee (Public Launch Discount!)</p>
+					<div class="price">
+						<span class="amount" style="font-size:36px; font-weight:700;">$490</span><span style="font-size:0.6em;">/year</span>
+					</div>
+					<p>(equivalent to 2 months free vs. Monthly Plan)</p>
+					<!--p style="margin-top: 0.5em;">Then just $49/month <strong>(starts after 12 months)</strong></p-->
+				</div>
+				<!--ul class="checkmark-list">
+					<li><i data-lucide="check"></i> Access to All Modules</li>
+					<li><i data-lucide="check"></i> Unlimited Users, Events, Sermons and Subscribers</li>
+					<li><i data-lucide="check"></i> Unlmited Pages, Ministries, Missions, and Staff</li>
+					<li><i data-lucide="check"></i> Display Unlimited Videos YouTube Channel Integration</li>
+					<li><i data-lucide="check"></i> Regular Platform Updates</li>
+					<li><i data-lucide="check"></i> Daily Backups</li>
+					<li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
+					<li><i data-lucide="check"></i> Rock-Star Support!</li>
+					<li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
+				</ul-->
+				<a href="#" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
+			</div>
+
+      <!-- Promo B - Monthly Plan -->
+      <div class="pricing-card">
+				<div class="pricing-header">
+					<div class="popular-badge">Quickstart ⚡️</div>
+					<h3 class="amount">Unlimited Plan ‣ Monthly</h3>
+					<p class="price-setup"><s>$499</s> <strong>$199</strong> Setup Fee (Public Launch Discount!)</p>
+					<div class="price">
+						<span class="amount" style="font-size:36px; font-weight:700;">$49</span></span><span style="font-size:0.6em;">/month</span>
+					</div>
+					<!--p style="margin-top: 0.5em;">Then just $49/month <strong>(starts after 12 months)</strong></p-->
+				</div>
+				<!--ul class="checkmark-list">
+					<li><i data-lucide="check"></i> Access to All Modules</li>
+					<li><i data-lucide="check"></i> Unlimited Users, Events, Sermons and Subscribers</li>
+					<li><i data-lucide="check"></i> Unlmited Pages, Ministries, Missions, and Staff</li>
+					<li><i data-lucide="check"></i> Display Unlimited Videos YouTube Channel Integration</li>
+					<li><i data-lucide="check"></i> Regular Platform Updates</li>
+					<li><i data-lucide="check"></i> Daily Backups</li>
+					<li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
+					<li><i data-lucide="check"></i> Rock-Star Support!</li>
+					<li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
+				</ul-->
+				<a href="#" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
+			</div>
+
+      <!-- Custom Plan -->
+      <div class="pricing-card"> ... Custom/Enterprise content here ... </div>
+    </div>
+  </div>
+</section>
+#}
+
+<section class="pricing" id="pricing">
+  <h2>Choose Your Plan</h2>
+  <p class="pricing-subtitle">Public Launch Promotion! Choose From the Following Options:</p>
+
+  <div class="pricing-grid promo-grid">
+    
+    <!-- Promo A -- Annual Plan -->
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <div class="popular-badge">1st Year Subscription Free!</div>
+        <h3 class="amount">🥳 Best Value 🎉</h3>
+        <p class="price-setup">$499 setup fee, then just $49/month after 12 months</p>
+        <div class="price">
+          <!--span class="amount" style="font-size:20px; font-weight:500;">Includes 1st 12 Months</span-->
+        </div>
+        <!--p style="margin-top: 0.5em;">Then just $49/month <strong>(starts after 12 months)</strong></p-->
+      </div>
+      <ul class="checkmark-list">
+        <li><i data-lucide="check"></i> Access to All Modules</li>
+        <li><i data-lucide="check"></i> Unlimited Users, Events, Sermons and Subscribers</li>
+        <li><i data-lucide="check"></i> Unlmited Pages, Ministries, Missions, and Staff</li>
+        <li><i data-lucide="check"></i> Display Unlimited Videos YouTube Channel Integration</li>
+        <li><i data-lucide="check"></i> Regular Platform Updates</li>
+        <li><i data-lucide="check"></i> Daily Backups</li>
+        <li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
+        <li><i data-lucide="check"></i> Rock-Star Support!</li>
+        <li><i data-lucide="check"></i> Domain Name Management</strong></li>
+      </ul>
+      <a href="#" id="get-started-annual" class="pricing-btn featured open-checkout" data-plan="annual">Get Started</a>
+      <p style="font-size:0.85em; margin-top:2em">*Includes 25GB storage. Add more @ $5/month per 10GB.</p>
+    </div>
+    
+    <!-- Promo B - Monthly Plan -->
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <div class="popular-badge">1st Month Free!</div>
+        <h3>Quickstart 🎉</h3>
+        <p class="price-setup"><s>$499</s> $199 setup fee, then just $49/month after 1 month</p>
+        <div class="price">
+          <!--span class="amount" style="font-size:0.7em; font-weight:500;">1ST MONTH FREE</span-->
+        </div>
+        <!--p style="margin-top: 0.5em;">Then just $49/month <strong>(starts after 1 month)</strong></p-->
+      </div>
+      <ul class="checkmark-list">
+        <li><i data-lucide="check"></i> Access to All Modules</li>
+        <li><i data-lucide="check"></i> Unlimited Users, Events, Sermons and Subscribers</li>
+        <li><i data-lucide="check"></i> Unlmited Pages, Ministries, Missions, and Staff</li>
+        <li><i data-lucide="check"></i> Display Unlimited Videos YouTube Channel Integration</li>
+        <li><i data-lucide="check"></i> Regular Platform Updates</li>
+        <li><i data-lucide="check"></i> Daily Backups</li>
+        <li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
+        <li><i data-lucide="check"></i> Rock-Star Support!</li>
+        <li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
+      </ul>
+      <a href="#" id="get-started-monthly" class="pricing-btn featured open-checkout" data-plan="monthly">Get Started</a>
+      <p style="font-size:0.85em; margin-top:2em">*Includes 25GB storage. Add more @ $5/month per 10GB.</p>
+    </div>
+
+    <!-- Custom Plan -->
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <h3>Custom/Enterprise</h3>
+        <p class="price-setup">Great for larger churches and parachurch organizations.</p>
+        <!--div class="price">
+          <span class="amount">Let’s Talk</span>
+        </div-->
+      </div>
+      <ul class="checkmark-list">
+        <li><i data-lucide="check"></i> Includes All Features from Unlimited Plan, Plus:</li>
+        <li><i data-lucide="check"></i> Customized Development & Design</li>
+        <li><i data-lucide="check"></i> Custom Integrations</li>
+        <li><i data-lucide="check"></i> Dedicated, Priority Support</li>
+        <li><i data-lucide="check"></i> Dedicated Server Resource Allocation*</li>
+        <li><i data-lucide="check"></i> Integrate with Your Productivity Tools & Workflows</li>
+      </ul>
+      <a href="/get-started/" class="pricing-btn featured">Contact Us</a>
+    </div>
+  </div>
+</section>
+
+<div id="checkout-panel" class="checkout-panel">
+  <div class="checkout-panel-header">
+    <h3>Checkout</h3>
+    <button id="close-checkout">&times;</button>
+  </div>
+  <h4 id="selected-plan"></h4>
+  <form id="checkout-form">
+    <input type="hidden" id="plan-input" name="plan">
+    <div class="form-row">
+      <label for="card-element">
+        Credit or debit card
+      </label>
+      <div id="card-element">
+        <!-- A Stripe Element will be inserted here. -->
+      </div>
+      <!-- Used to display form errors. -->
+      <div id="card-errors" role="alert"></div>
+    </div>
+    <button>Submit Payment</button>
+  </form>
+</div>
+
+<section class="testimonials" id="testimonials">
+    <h2>What Churches Are Saying</h2>
+    <div class="testimonials-grid">
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                <p>"We want to say thank you so much for the fantastic work you have done for us. We highly recommend your work. 
+God Bless you guys."</p>
+            </div>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar">DL</div>
+                <div class="testimonial-info">
+                    <h4>Pastor Doug Lake</h4>
+                    <p>Open Arms Baptist Church</p>
+                </div>
+            </div>
+        </div>
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                <p>"I especially appreciated that they took the time to show us how to make minor updates ourselves, so we wouldn’t need to rely on them for every little change."</p>
+            </div>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar">ML</div>
+                <div class="testimonial-info">
+                    <h4>Mikel Laurie</h4>
+                    <p>Highlands Baptist</p>
+                </div>
+            </div>
+        </div>
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                <p>"You’ve been an absolute gift to us! You helped shape our web presence into something we’re really proud of and you did it with thoughtfulness, creativity, and tons of patience. Truly, thank you."</p>
+            </div>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar">NA</div>
+                <div class="testimonial-info">
+                    <h4>Natasha Alfred</h4>
+                    <p>Trinity Church Kelowna</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq" id="faq">
+    <h2>Frequently Asked Questions</h2>
+    
+    <div class="accordion-container">
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <h3>Do I need technical expertise to use Kite?</h3>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Not at all! Kite is designed to be user-friendly for church staff of all technical levels. Our platform comes with an intuitive dashboard and pre-built templates specifically designed for churches. We also provide comprehensive onboarding and support to help you get started quickly.</p>
+                <p>For more complex customizations, our team is always available to assist you, or you can choose a plan with dedicated support.</p>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <h3>Can I migrate my existing church website content to Kite?</h3>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Absolutely! We offer seamless migration services to help transition your existing church website content to the Kite platform. Our team will work with you to ensure that your content, branding choices, and important functionality are maintained during the migration process.</p>
+                <p>But remember, with Kite you can do much more than just host static website pages! Be sure to check out all of our Modules which are included with our Unlmited Plan.</p>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <h3>How does payment processing work for events and donations?</h3>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Kite integrates with the popular payment processor <a href="https://squareup.com">Square</a> to provide secure and reliable payment processing for events. We handle all the technical aspects of payment processing, including security compliance and transaction management.</p>
+                <p>Regarding donations, we also support linking to donation platforms like <a href="https://tithe.ly">Tithe.ly</a> and <a href="https://pushpay.com">Pushpay</a>, allowing you to accept donations directly through your church website.</p>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <h3>Is there a limit to how many events we can create?</h3>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>There are <strong>no limits</strong> on the number of events you can create with Kite! Whether you're managing weekly services, special events, community outreach programs, or small group meetings, our platform can handle it all.</p>
+                <p>Our advanced event management system includes features like registration, attendance tracking, calendar integration, and automated reminders to help you organize and promote your church events effectively.</p>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <h3>Can we customize the design to match our church's branding?</h3>
+                <i data-lucide="chevron-down" class="accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Kite provides certain customization options to ensure your digital presence aligns with your church's unique branding (e.g., logo, colors, fonts, and more).</p>
+                <p>For churches on a Custom plan, we also offer custom design services to help you create a truly unique online presence that reflects your church's identity and mission.</p>
+            </div>
+        </div>
+    </div>
+</section>
