@@ -1,7 +1,13 @@
 // src/js/checkout.js
 
 document.addEventListener('DOMContentLoaded', () => {
-  const stripe = Stripe(STRIPE_PUBLISHABLE_KEY); // Use the global variable
+  // Check if we have a valid Stripe key
+  if (!window.STRIPE_PUBLISHABLE_KEY || window.STRIPE_PUBLISHABLE_KEY === "") {
+    console.error("Stripe publishable key is missing or empty!");
+    return; // Exit early to prevent errors
+  }
+  
+  const stripe = Stripe(window.STRIPE_PUBLISHABLE_KEY); // Use the global variable
   const elements = stripe.elements();
 
   const style = {

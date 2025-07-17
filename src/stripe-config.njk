@@ -2,4 +2,5 @@
 permalink: /js/stripe-config.js
 ---
 // Generated at build time by Eleventy
-window.STRIPE_PUBLISHABLE_KEY = "{{ process.env.STRIPE_API_KEY_PUBLIC }}";
+window.STRIPE_PUBLISHABLE_KEY = "{{ env.stripePublishableKey }}";
+console.log("Stripe key:", window.STRIPE_PUBLISHABLE_KEY);
