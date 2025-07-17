@@ -17,7 +17,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { token, plan } = JSON.parse(event.body);
+    const { token, plan, customer } = JSON.parse(event.body);
 
     // This is a simplified example. In a real application, you would
     // create a customer, a subscription, and handle payment intents.
@@ -38,12 +38,34 @@ exports.handler = async (event) => {
         body: JSON.stringify({ error: 'Invalid plan specified.' }),
       };
     }
+    
+    // Apply discount if code is present
+    if (customer && customer.discountCode) {
+      if (customer.discountCode.toUpperCase() === 'LAUNCH') {
+        // Apply 20% discount
+        const discountAmount = Math.round(amount * 0.2);
+        amount -= discountAmount;
+        description += ' (with 20% LAUNCH discount)';
+      }
+    }
 
+    // First create a customer in Stripe
+    const stripeCustomer = await stripe.customers.create({
+      email: customer.email,
+      name: customer.name,
+      phone: customer.phone,
+      metadata: {
+        churchName: customer.churchName
+      },
+      source: token
+    });
+
+    // Then create the charge using the customer ID
     const charge = await stripe.charges.create({
       amount: amount,
       currency: 'usd',
       description: description,
-      source: token,
+      customer: stripeCustomer.id
     });
 
     return {

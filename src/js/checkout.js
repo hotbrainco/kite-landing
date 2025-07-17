@@ -50,6 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeCheckout = document.getElementById('close-checkout');
   const checkoutForm = document.getElementById('checkout-form');
   const planInput = document.getElementById('plan-input');
+  const discountCodeInput = document.getElementById('discount-code-input');
+  const discountCode = document.getElementById('discount-code');
+  const applyDiscountButton = document.getElementById('apply-discount');
+  const discountMessage = document.getElementById('discount-message');
   const formError = document.getElementById('card-errors');
 
   const openCheckoutButtons = document.querySelectorAll('.open-checkout');
@@ -58,9 +62,23 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', (e) => {
       e.preventDefault();
       const plan = button.dataset.plan;
+      const planName = button.dataset.planName || (plan === 'annual' ? 'Annual Plan' : 'Monthly Plan');
+      const planPrice = button.dataset.planPrice || '$XX/mo';
+      const planDescription = button.dataset.planDescription || 'Kite website and communications platform';
+      
+      // Update the hidden input
       planInput.value = plan;
-      // You can update the panel to show which plan is selected
-      document.getElementById('selected-plan').innerText = plan === 'annual' ? 'Annual Plan' : 'Monthly Plan';
+      
+      // Update the displayed plan information
+      document.getElementById('selected-plan-name').innerText = planName;
+      document.getElementById('selected-plan-price').innerText = planPrice;
+      document.getElementById('selected-plan-description').innerText = planDescription;
+      
+      // Update the totals
+      document.getElementById('subtotal-amount').innerText = planPrice;
+      document.getElementById('total-amount').innerText = planPrice;
+      
+      // Open the checkout panel
       checkoutPanel.classList.add('open');
     });
   });
@@ -68,6 +86,67 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeCheckout) {
     closeCheckout.addEventListener('click', () => {
       checkoutPanel.classList.remove('open');
+    });
+  }
+  
+  // Handle discount code application
+  if (applyDiscountButton) {
+    applyDiscountButton.addEventListener('click', async () => {
+      const code = discountCode.value.trim();
+      if (!code) {
+        discountMessage.textContent = 'Please enter a discount code';
+        discountMessage.style.color = '#fa755a';
+        return;
+      }
+      
+      applyDiscountButton.disabled = true;
+      applyDiscountButton.textContent = 'Checking...';
+      
+      try {
+        // This would be a real API call to validate the discount code
+        // For now, we'll simulate with a timeout
+        setTimeout(() => {
+          // Demo: Accept "LAUNCH" as a valid 20% discount
+          if (code.toUpperCase() === 'LAUNCH') {
+            const subtotalElement = document.getElementById('subtotal-amount');
+            const subtotalText = subtotalElement.innerText;
+            const subtotal = parseFloat(subtotalText.replace(/[^0-9.-]+/g, ''));
+            
+            if (!isNaN(subtotal)) {
+              const discountAmount = subtotal * 0.2; // 20% discount
+              const newTotal = subtotal - discountAmount;
+              
+              // Update discount display
+              document.getElementById('discount-amount').innerText = 
+                `-$${discountAmount.toFixed(2)}/mo`;
+              document.getElementById('total-amount').innerText = 
+                `$${newTotal.toFixed(2)}/mo`;
+              
+              // Show the discount row
+              document.querySelector('.discount').classList.remove('hidden');
+              
+              // Update hidden input
+              discountCodeInput.value = code;
+              
+              // Show success message
+              discountMessage.textContent = 'Discount applied: 20% off';
+              discountMessage.style.color = '#28a745';
+            }
+          } else {
+            discountMessage.textContent = 'Invalid discount code';
+            discountMessage.style.color = '#fa755a';
+            discountCodeInput.value = '';
+          }
+          
+          applyDiscountButton.disabled = false;
+          applyDiscountButton.textContent = 'Apply';
+        }, 1000);
+      } catch (error) {
+        discountMessage.textContent = 'Error checking discount code';
+        discountMessage.style.color = '#fa755a';
+        applyDiscountButton.disabled = false;
+        applyDiscountButton.textContent = 'Apply';
+      }
     });
   }
 
@@ -84,13 +163,27 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.disabled = false;
       } else {
         formError.textContent = '';
-        // Send token and plan to your server
+        
+        // Gather customer information
+        const customerData = {
+          name: document.getElementById('customer-name').value,
+          churchName: document.getElementById('church-name').value,
+          email: document.getElementById('customer-email').value,
+          phone: document.getElementById('customer-phone').value,
+          discountCode: discountCodeInput.value
+        };
+        
+        // Send token, plan, and customer data to your server
         const response = await fetch('/.netlify/functions/process-payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ token: token.id, plan: planInput.value }),
+          body: JSON.stringify({ 
+            token: token.id, 
+            plan: planInput.value,
+            customer: customerData
+          }),
         });
 
         const result = await response.json();
