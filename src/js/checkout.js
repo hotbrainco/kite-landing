@@ -43,8 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const card = elements.create('card', { style: style });
+  // Create card element with additional options to handle both US and Canadian postal codes
+  const cardOptions = {
+    style: style,
+    hidePostalCode: false, // Show the postal code field
+    zipCode: true, // Enable zip code validation
+    iconStyle: 'solid',
+  };
+
+  const card = elements.create('card', cardOptions);
   card.mount('#card-element');
+
+  // Listen for changes in the card element
+  card.addEventListener('change', (event) => {
+    if (event.error) {
+      formError.textContent = event.error.message;
+    } else {
+      formError.textContent = '';
+    }
+    
+    // Check if the event contains country info (when user selects a country)
+    if (event.country) {
+      console.log(`Country selected: ${event.country}`);
+      // You could adjust UI based on country if needed
+    }
+  });
 
   const checkoutPanel = document.getElementById('checkout-panel');
   const closeCheckout = document.getElementById('close-checkout');
@@ -156,7 +179,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const submitButton = event.target.querySelector('button');
       submitButton.disabled = true;
 
-      const { token, error } = await stripe.createToken(card);
+      // Get customer information
+      const customerName = document.getElementById('customer-name').value;
+      const customerEmail = document.getElementById('customer-email').value;
+      const customerPhone = document.getElementById('customer-phone').value;
+      
+      // Prepare billing details for Stripe
+      const billingDetails = {
+        name: customerName,
+        email: customerEmail,
+        phone: customerPhone,
+      };
+
+      // Create token with billing details
+      const { token, error } = await stripe.createToken(card, { 
+        name: customerName, 
+        // The card Element automatically collects postal code
+      });
 
       if (error) {
         formError.textContent = error.message;
