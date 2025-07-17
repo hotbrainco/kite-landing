@@ -90,7 +90,7 @@ exports.handler = async (event) => {
         'promo_1RkwtrFBc7hwldVNhA31P7at',
       ],
       annual: [
-        'promo_1RkvxxFBc7hwldVNiEyItNTe',
+        'promo_1RkwoPFBc7hwldVN1kqmowdG',
       ],
     };
 

@@ -93,9 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
       planInput.value = plan;
       
       // Update the displayed plan information
-      document.getElementById('selected-plan-name').innerText = planName;
+      document.getElementById('selected-plan-name').innerText = plan === 'annual' ? 'Kite Setup Fee' : planName;
       document.getElementById('selected-plan-price').innerText = planPrice;
       document.getElementById('selected-plan-description').innerText = planDescription;
+      
+      // For annual plan, show the promo code is activated
+      if (plan === 'annual') {
+        document.getElementById('discount-message').textContent = 'Promo code promo_1RkwoPFBc7hwldVN1kqmowdG is activated';
+        document.getElementById('discount-message').style.color = '#28a745';
+        document.querySelector('.discount').classList.remove('hidden');
+        document.getElementById('discount-amount').innerText = 'Promotional discount applied';
+      } else {
+        document.getElementById('discount-message').textContent = '';
+        document.querySelector('.discount').classList.add('hidden');
+      }
       
       // Update the totals
       document.getElementById('subtotal-amount').innerText = planPrice;
