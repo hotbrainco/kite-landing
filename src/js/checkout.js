@@ -7,6 +7,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return; // Exit early to prevent errors
   }
   
+  // Display test mode indicator if applicable
+  if (window.STRIPE_TEST_MODE) {
+    const testBanner = document.createElement('div');
+    testBanner.style.background = '#f0ad4e';
+    testBanner.style.color = 'black';
+    testBanner.style.padding = '5px 10px';
+    testBanner.style.textAlign = 'center';
+    testBanner.style.fontWeight = 'bold';
+    testBanner.textContent = '⚠️ TEST MODE - No real charges will be made ⚠️';
+    
+    // Add to the top of the checkout panel
+    const checkoutPanel = document.querySelector('.checkout-panel');
+    if (checkoutPanel) {
+      checkoutPanel.insertBefore(testBanner, checkoutPanel.firstChild);
+    }
+  }
+  
   const stripe = Stripe(window.STRIPE_PUBLISHABLE_KEY); // Use the global variable
   const elements = stripe.elements();
 

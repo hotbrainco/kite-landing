@@ -1,4 +1,15 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// Load environment variables
+require('dotenv').config();
+
+// Set this to match the same value as in src/_data/env.cjs
+const USE_TEST_MODE = true;
+
+// Choose the appropriate Stripe API key based on mode
+const stripeSecretKey = USE_TEST_MODE 
+  ? process.env.STRIPE_API_KEY_SECRET_TEST 
+  : process.env.STRIPE_API_KEY_SECRET;
+
+const stripe = require('stripe')(stripeSecretKey);
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {

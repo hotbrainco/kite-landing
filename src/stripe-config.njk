@@ -3,4 +3,6 @@ permalink: /js/stripe-config.js
 ---
 // Generated at build time by Eleventy
 window.STRIPE_PUBLISHABLE_KEY = "{{ env.stripePublishableKey }}";
+window.STRIPE_TEST_MODE = {{ env.isTestMode }};
 console.log("Stripe key:", window.STRIPE_PUBLISHABLE_KEY);
+console.log("Stripe mode:", window.STRIPE_TEST_MODE ? "TEST MODE" : "LIVE MODE");
