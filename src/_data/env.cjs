@@ -1,4 +1,4 @@
-// src/_data/env.js
+// src/_data/env.cjs
 // Expose environment variables to the Eleventy build
 require('dotenv').config();
 
