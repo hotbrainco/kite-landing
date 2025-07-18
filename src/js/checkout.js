@@ -153,4 +153,40 @@ document.addEventListener('DOMContentLoaded', () => {
   closeCheckoutButton.addEventListener('click', () => {
     checkoutPanel.classList.remove('open');
   });
+
+  // --- STRIPE ELEMENTS INITIALIZATION ---
+  // This code sets up the credit card entry field.
+  
+  // Get the Stripe publishable key from the global scope (set in stripe-config.js)
+  const stripe = Stripe(window.stripePublishableKey);
+  
+  const elements = stripe.elements();
+  const cardElement = elements.create('card', {
+    style: {
+      base: {
+        color: '#32325d',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontSize: '16px',
+        '::placeholder': {
+          color: '#aab7c4'
+        }
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a'
+      }
+    }
+  });
+  
+  // Mount the card element to the div in your form
+  cardElement.mount('#card-element');
+  
+  // Handle form submission
+  const form = document.getElementById('checkout-form');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    // Payment processing logic will go here in a future step
+    console.log('Form submitted. Payment processing to be added.');
+  });
 });
