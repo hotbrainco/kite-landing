@@ -85,11 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
     totalAmount.innerText = formatCurrency(total);
 
     if (promo && promo.coupon) {
+      const discountApplied = subtotal - total;
       discountSection.classList.remove('hidden');
-      const coupon = promo.coupon;
-      const discountString = coupon.percent_off ? `${coupon.percent_off}% discount` : `${formatCurrency(coupon.amount_off, coupon.currency)} discount`;
-      discountAmountEl.innerText = discountString;
+      // Format the discount value as a negative currency amount
+      discountAmountEl.innerText = `-${formatCurrency(discountApplied)}`;
 
+      const coupon = promo.coupon;
       // Build the new dynamic message
       const discountValue = `<strong>${coupon.percent_off}%</strong>`;
       let durationText = '';
