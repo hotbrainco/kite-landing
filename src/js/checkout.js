@@ -89,7 +89,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const coupon = promo.coupon;
       const discountString = coupon.percent_off ? `${coupon.percent_off}% discount` : `${formatCurrency(coupon.amount_off, coupon.currency)} discount`;
       discountAmountEl.innerText = discountString;
-      discountMessage.textContent = `Promo code "${promo.code}" is automatically applied.`;
+
+      // Build the new dynamic message
+      const discountValue = `<strong>${coupon.percent_off}%</strong>`;
+      let durationText = '';
+      if (coupon.duration === 'once') {
+        durationText = 'the first <strong>year</strong>'; // Assuming 'once' on an annual plan means first year
+      } else if (coupon.duration === 'repeating' && coupon.duration_in_months) {
+        durationText = `the first <strong>${coupon.duration_in_months} months</strong>`;
+      }
+      
+      discountMessage.innerHTML = `Promo code <strong>${promo.code}</strong> (${discountValue} off ${durationText}) applied!`;
       discountMessage.classList.add('applied');
     } else {
       discountSection.classList.add('hidden');
