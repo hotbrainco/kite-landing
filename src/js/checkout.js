@@ -120,8 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify({ 
             action: 'getPromoCode',
-            promoId: 'promo_1RkwoPFBc7hwldVN1kqmowdG',
-            plan: 'annual'
+            promoId: 'promo_1RkwoPFBc7hwldVN1kqmowdG'
           }),
         })
         .then(response => response.json())

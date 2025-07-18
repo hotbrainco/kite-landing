@@ -21,6 +21,21 @@ const stripeSecretKey = USE_TEST_MODE
 
 const stripe = require('stripe')(stripeSecretKey);
 
+// Define our product price IDs
+const PRODUCTS = {
+  SETUP_FEE: {
+    id: 'price_1RkulYFBc7hwldVNmNlB1zkJ',
+    name: 'Kite Setup Fee'
+  },
+  ANNUAL_SUBSCRIPTION: {
+    id: 'price_1RktLMFBc7hwldVN0TBQhz9T',
+    name: 'Kite Annual Subscription'
+  }
+};
+
+// Define the promo code for the annual plan
+const ANNUAL_PROMO_CODE = 'promo_1RkwoPFBc7hwldVN1kqmowdG';
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -29,26 +44,9 @@ exports.handler = async (event) => {
   try {
     const requestData = JSON.parse(event.body);
     
-    // Product and price configuration from Stripe
-    const setupFeePriceMap = {
-      monthly: 'price_1RkulYFBc7hwldVNmNlB1zkJ', // Setup fee for monthly, $199
-      annual: 'price_1RkulYFBc7hwldVNmNlB1zkJ',  // Setup fee for annual, $499
-    };
-
-    // Map of promotion codes by plan type
-    const promotionCodeMap = {
-      monthly: [
-        'promo_1RkvAkFBc7hwldVNfD6Rb6pe',  // Monthly promo code 1
-        'promo_1RkwtrFBc7hwldVNhA31P7at',  // Monthly promo code 2
-      ],
-      annual: [
-        'promo_1RkwoPFBc7hwldVN1kqmowdG',  // Annual promo code - Launch special
-      ],
-    };
-    
     // Check if this is a request to get promo code details
     if (requestData.action === 'getPromoCode') {
-      const { promoId, plan } = requestData;
+      const { promoId } = requestData;
       
       // Validate promo ID
       if (!promoId) {
@@ -69,7 +67,7 @@ exports.handler = async (event) => {
             code: promotionCode.code,
             percentOff: promotionCode.coupon?.percent_off || 0,
             amountOff: promotionCode.coupon?.amount_off || 0,
-            name: `${promotionCode.code} - ${promotionCode.coupon?.percent_off || 0}% off`
+            name: `${promotionCode.code}`
           })
         };
       } catch (error) {
@@ -84,44 +82,29 @@ exports.handler = async (event) => {
     // Otherwise, process a payment
     const { token, plan, customer } = requestData;
     
-    // Get the correct price ID based on plan
-    const priceId = setupFeePriceMap[plan];
-    if (!priceId) {
+    // Validate plan
+    if (plan !== 'annual') {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Invalid plan specified.' }),
+        body: JSON.stringify({ error: 'Only annual plan is currently supported.' }),
       };
     }
 
-    // Get the price information from Stripe
-    const price = await stripe.prices.retrieve(priceId);
-    const amount = price.unit_amount;
-    const description = `Kite ${plan === 'annual' ? 'Annual' : 'Monthly'} Plan Setup Fee`;
+    // For annual plan, we use the setup fee and annual subscription products
+    const setupFeePrice = PRODUCTS.SETUP_FEE;
     
-    // Apply promotion code if present
-    let appliedPromotion = null;
-    if (customer && customer.discountCode) {
-      // Check if the provided discount code matches any of our promo codes
-      // This would normally involve a lookup to Stripe's API to validate the code
-      // For now, we'll use the LAUNCH code from the previous implementation
-      if (customer.discountCode.toUpperCase() === 'LAUNCH') {
-        // Apply 20% discount
-        const discountAmount = Math.round(amount * 0.2);
-        const discountedAmount = amount - discountAmount;
-        description += ' (with 20% LAUNCH discount)';
-        
-        // In a full implementation, we would retrieve the promo code from Stripe
-        // and apply it properly to the payment
-      }
-    }
+    // Get price information from Stripe
+    const price = await stripe.prices.retrieve(setupFeePrice.id);
+    const amount = price.unit_amount;
+    const description = `${setupFeePrice.name} - Annual Plan`;
 
     // First create a customer in Stripe
     const stripeCustomer = await stripe.customers.create({
       email: customer.email,
       name: customer.name,
-      phone: customer.phone,
+      phone: customer.phone || '',
       metadata: {
-        churchName: customer.churchName
+        churchName: customer.churchName || ''
       },
       source: token
     });
@@ -136,9 +119,15 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, chargeId: charge.id }),
+      body: JSON.stringify({ 
+        success: true, 
+        chargeId: charge.id,
+        customerName: customer.name,
+        customerEmail: customer.email
+      }),
     };
   } catch (error) {
+    console.error('Payment processing error:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),
