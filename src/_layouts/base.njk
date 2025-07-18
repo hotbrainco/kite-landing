@@ -19,6 +19,10 @@
             }
         })();
     </script>
+    <script>
+        window.stripePublishableKey = "{{ site.stripe.publishableKey }}";
+        window.isTestMode = {{ site.isTestMode }};
+    </script>
 </head>
 <body>
     {% include "header.njk" %}
@@ -36,5 +40,6 @@
     </script>
     
     {{ scripts | safe }}
+
 </body>
 </html>
