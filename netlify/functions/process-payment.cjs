@@ -8,7 +8,7 @@
  * Last updated: July 2025
  */
 
-// Load environment variables
+// Load environment variables 
 require('dotenv').config();
 
 // Set this to match the same value as in src/_data/env.cjs
