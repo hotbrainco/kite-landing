@@ -135,9 +135,27 @@ exports.handler = async (event) => {
               }
             }
           ];
+
+          // Also fetch the promotion code for the annual plan
+          let promo = null;
+          try {
+            const promotionCode = await stripe.promotionCodes.retrieve(ANNUAL_PROMO_CODE, {
+              expand: ['coupon']
+            });
+            if (promotionCode.active) {
+              promo = {
+                id: promotionCode.id,
+                code: promotionCode.code,
+                coupon: promotionCode.coupon // Embed the entire coupon object
+              };
+            }
+          } catch (promoError) {
+            console.warn(`Could not retrieve promo code ${ANNUAL_PROMO_CODE}:`, promoError.message);
+          }
+
           return {
             statusCode: 200,
-            body: JSON.stringify({ lineItems })
+            body: JSON.stringify({ lineItems, promo })
           };
         } else if (plan === 'monthly') {
           // Only return the recurring line item for monthly
