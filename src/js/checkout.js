@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
       descriptions.push(item.description);
 
       let finalPrice = item.unitAmount;
-      let priceHtml = `<span>${item.formattedPrice}</span>`;
+      const originalPriceFormatted = formatCurrency(item.unitAmount, item.currency, item.interval);
+      let priceHtml = `<span>${originalPriceFormatted}</span>`;
 
       // Apply discount only to recurring items (which have an 'interval')
       if (promo && promo.coupon && item.interval) {
@@ -67,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (finalPrice < originalPrice) {
           const newPriceFormatted = formatCurrency(finalPrice, item.currency, item.interval);
-          priceHtml = `<span><s>${item.formattedPrice}</s> ${newPriceFormatted}</span>`;
+          priceHtml = `<span><s>${originalPriceFormatted}</s> ${newPriceFormatted}</span>`;
         }
       }
       
