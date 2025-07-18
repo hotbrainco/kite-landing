@@ -97,10 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
       planInput.value = plan;
       
       // Set loading state for price info
-      document.getElementById('selected-plan-name').innerText = 'Loading...';
-      document.getElementById('selected-plan-price').innerText = 'Loading...';
+      const orderLineItems = document.getElementById('order-line-items');
+      orderLineItems.innerHTML = `<div class="product-name-price"><span>Loading...</span><span>Loading...</span></div>`;
       document.getElementById('selected-plan-description').innerText = 'Loading product information...';
-      
+
       try {
         // Fetch price information from Stripe
         const response = await fetch('/.netlify/functions/process-payment', {
@@ -110,34 +110,40 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify({ 
             action: 'getPriceInfo',
-            plan: plan // Send the plan type instead of a specific price ID
+            plan: plan
           }),
         });
-        
-        const priceInfo = await response.json();
-        
-        if (response.ok) {
-          // Update the displayed plan information with fetched data
-          document.getElementById('selected-plan-name').innerText = priceInfo.product.name;
-          document.getElementById('selected-plan-price').innerText = priceInfo.formattedPrice;
-          document.getElementById('selected-plan-description').innerText = priceInfo.product.description || '';
-          
-          // Update the totals
-          document.getElementById('subtotal-amount').innerText = priceInfo.formattedPrice;
-          document.getElementById('total-amount').innerText = priceInfo.formattedPrice;
+        const data = await response.json();
+
+        if (response.ok && data.lineItems && Array.isArray(data.lineItems)) {
+          // Render all line items
+          let html = '';
+          let subtotal = 0;
+          let description = [];
+          data.lineItems.forEach(item => {
+            html += `<div class="product-name-price"><span>${item.name}</span><span>${item.formattedPrice}</span></div>`;
+            subtotal += item.unitAmount;
+            if (item.description) description.push(item.description);
+          });
+          orderLineItems.innerHTML = html;
+          document.getElementById('selected-plan-description').innerText = description.join(' ');
+          // Show subtotal and total (before discount)
+          document.getElementById('subtotal-amount').innerText = `$${(subtotal / 100).toFixed(2)}`;
+          document.getElementById('total-amount').innerText = `$${(subtotal / 100).toFixed(2)}`;
         } else {
-          // Fallback if price fetch fails - use generic placeholders to indicate error state
-          document.getElementById('selected-plan-name').innerText = 'Product information unavailable';
-          document.getElementById('selected-plan-price').innerText = 'Price unavailable';
+          // Fallback if price fetch fails
+          orderLineItems.innerHTML = `<div class='product-name-price'><span>Product information unavailable</span><span>Price unavailable</span></div>`;
           document.getElementById('selected-plan-description').innerText = 'Unable to fetch product details from Stripe. Please try again later.';
-          console.error('Error fetching price information:', priceInfo.error);
+          document.getElementById('subtotal-amount').innerText = 'N/A';
+          document.getElementById('total-amount').innerText = 'N/A';
+          console.error('Error fetching price information:', data.error);
         }
       } catch (error) {
-        console.error('Error fetching price information:', error);
-        // Fallback values - use generic placeholders to indicate error state
-        document.getElementById('selected-plan-name').innerText = 'Product information unavailable';
-        document.getElementById('selected-plan-price').innerText = 'Price unavailable';
+        orderLineItems.innerHTML = `<div class='product-name-price'><span>Product information unavailable</span><span>Price unavailable</span></div>`;
         document.getElementById('selected-plan-description').innerText = 'Unable to fetch product details from Stripe. Please try again later.';
+        document.getElementById('subtotal-amount').innerText = 'N/A';
+        document.getElementById('total-amount').innerText = 'N/A';
+        console.error('Error fetching price information:', error);
       }
       
       // For annual plan, fetch and show the promo code

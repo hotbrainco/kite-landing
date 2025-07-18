@@ -88,50 +88,84 @@ exports.handler = async (event) => {
     // Check if this is a request to get price information
     if (requestData.action === 'getPriceInfo') {
       const { plan } = requestData;
-      
       if (!plan) {
         return {
           statusCode: 400,
           body: JSON.stringify({ error: 'Missing plan type' })
         };
       }
-      
-      // Determine the price ID based on the plan
-      let priceId;
-      if (plan === 'annual') {
-        priceId = PRICE_IDS.SETUP_FEE;
-      } else if (plan === 'monthly') {
-        priceId = PRICE_IDS.ANNUAL_SUBSCRIPTION; // Using this ID for monthly for now
-      } else {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: 'Invalid plan type' })
-        };
-      }
-      
       try {
-        // Fetch price information from Stripe
-        const price = await stripe.prices.retrieve(priceId, {
-          expand: ['product'] // Expand the product information
-        });
-        
-        return {
-          statusCode: 200,
-          body: JSON.stringify({
-            id: price.id,
-            name: price.product.name,
-            description: price.product.description || '',
-            unitAmount: price.unit_amount,
-            currency: price.currency,
-            formattedPrice: `$${(price.unit_amount / 100).toFixed(2)}${price.recurring ? '/' + price.recurring.interval : ''}`,
-            interval: price.recurring ? price.recurring.interval : null,
-            product: {
-              id: price.product.id,
-              name: price.product.name,
-              description: price.product.description || ''
+        if (plan === 'annual') {
+          // Fetch both setup fee (one-time) and annual subscription (recurring)
+          const setupFee = await stripe.prices.retrieve(PRICE_IDS.SETUP_FEE, { expand: ['product'] });
+          const annualSub = await stripe.prices.retrieve(PRICE_IDS.ANNUAL_SUBSCRIPTION, { expand: ['product'] });
+
+          const lineItems = [
+            {
+              id: setupFee.id,
+              name: setupFee.product.name,
+              description: setupFee.product.description || '',
+              unitAmount: setupFee.unit_amount,
+              currency: setupFee.currency,
+              formattedPrice: `$${(setupFee.unit_amount / 100).toFixed(2)}`,
+              interval: null,
+              type: 'one_time',
+              product: {
+                id: setupFee.product.id,
+                name: setupFee.product.name,
+                description: setupFee.product.description || ''
+              }
+            },
+            {
+              id: annualSub.id,
+              name: annualSub.product.name,
+              description: annualSub.product.description || '',
+              unitAmount: annualSub.unit_amount,
+              currency: annualSub.currency,
+              formattedPrice: `$${(annualSub.unit_amount / 100).toFixed(2)}/${annualSub.recurring.interval}`,
+              interval: annualSub.recurring.interval,
+              type: 'recurring',
+              product: {
+                id: annualSub.product.id,
+                name: annualSub.product.name,
+                description: annualSub.product.description || ''
+              }
             }
-          })
-        };
+          ];
+          return {
+            statusCode: 200,
+            body: JSON.stringify({ lineItems })
+          };
+        } else if (plan === 'monthly') {
+          // Only return the recurring line item for monthly
+          const monthly = await stripe.prices.retrieve(PRICE_IDS.ANNUAL_SUBSCRIPTION, { expand: ['product'] });
+          const lineItems = [
+            {
+              id: monthly.id,
+              name: monthly.product.name,
+              description: monthly.product.description || '',
+              unitAmount: monthly.unit_amount,
+              currency: monthly.currency,
+              formattedPrice: `$${(monthly.unit_amount / 100).toFixed(2)}/${monthly.recurring.interval}`,
+              interval: monthly.recurring.interval,
+              type: 'recurring',
+              product: {
+                id: monthly.product.id,
+                name: monthly.product.name,
+                description: monthly.product.description || ''
+              }
+            }
+          ];
+          return {
+            statusCode: 200,
+            body: JSON.stringify({ lineItems })
+          };
+        } else {
+          return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Invalid plan type' })
+          };
+        }
       } catch (error) {
         console.error('Error fetching price information:', error);
         return {
