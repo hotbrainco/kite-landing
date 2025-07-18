@@ -21,16 +21,10 @@ const stripeSecretKey = USE_TEST_MODE
 
 const stripe = require('stripe')(stripeSecretKey);
 
-// Define our product price IDs
-const PRODUCTS = {
-  SETUP_FEE: {
-    id: 'price_1RkulYFBc7hwldVNmNlB1zkJ',
-    name: 'Kite Setup Fee'
-  },
-  ANNUAL_SUBSCRIPTION: {
-    id: 'price_1RktLMFBc7hwldVN0TBQhz9T',
-    name: 'Kite Annual Subscription'
-  }
+// Define price IDs - we'll fetch the actual details from Stripe
+const PRICE_IDS = {
+  SETUP_FEE: 'price_1RkulYFBc7hwldVNmNlB1zkJ',
+  ANNUAL_SUBSCRIPTION: 'price_1RktLMFBc7hwldVN0TBQhz9T'
 };
 
 // Define the promo code for the annual plan
@@ -46,13 +40,25 @@ exports.handler = async (event) => {
     
     // Check if this is a request to get promo code details
     if (requestData.action === 'getPromoCode') {
-      const { promoId } = requestData;
+      const { plan } = requestData;
       
-      // Validate promo ID
-      if (!promoId) {
+      // Validate plan
+      if (!plan) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ error: 'Missing promotion ID' })
+          body: JSON.stringify({ error: 'Missing plan type' })
+        };
+      }
+      
+      // Determine promo ID based on plan
+      let promoId;
+      if (plan === 'annual') {
+        promoId = ANNUAL_PROMO_CODE;
+      } else {
+        // No promo for other plans
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: 'No promotion available for this plan' })
         };
       }
       
@@ -79,6 +85,62 @@ exports.handler = async (event) => {
       }
     }
     
+    // Check if this is a request to get price information
+    if (requestData.action === 'getPriceInfo') {
+      const { plan } = requestData;
+      
+      if (!plan) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: 'Missing plan type' })
+        };
+      }
+      
+      // Determine the price ID based on the plan
+      let priceId;
+      if (plan === 'annual') {
+        priceId = PRICE_IDS.SETUP_FEE;
+      } else if (plan === 'monthly') {
+        priceId = PRICE_IDS.ANNUAL_SUBSCRIPTION; // Using this ID for monthly for now
+      } else {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: 'Invalid plan type' })
+        };
+      }
+      
+      try {
+        // Fetch price information from Stripe
+        const price = await stripe.prices.retrieve(priceId, {
+          expand: ['product'] // Expand the product information
+        });
+        
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            id: price.id,
+            name: price.product.name,
+            description: price.product.description || '',
+            unitAmount: price.unit_amount,
+            currency: price.currency,
+            formattedPrice: `$${(price.unit_amount / 100).toFixed(2)}${price.recurring ? '/' + price.recurring.interval : ''}`,
+            interval: price.recurring ? price.recurring.interval : null,
+            product: {
+              id: price.product.id,
+              name: price.product.name,
+              description: price.product.description || ''
+            }
+          })
+        };
+      } catch (error) {
+        console.error('Error fetching price information:', error);
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: 'Price not found' })
+        };
+      }
+    }
+    
     // Otherwise, process a payment
     const { token, plan, customer } = requestData;
     
@@ -90,13 +152,16 @@ exports.handler = async (event) => {
       };
     }
 
-    // For annual plan, we use the setup fee and annual subscription products
-    const setupFeePrice = PRODUCTS.SETUP_FEE;
+    // Get the price ID for the setup fee based on plan
+    const priceId = PRICE_IDS.SETUP_FEE;
     
-    // Get price information from Stripe
-    const price = await stripe.prices.retrieve(setupFeePrice.id);
+    // Fetch price information from Stripe
+    const price = await stripe.prices.retrieve(priceId, {
+      expand: ['product'] // Expand the product information
+    });
+    
     const amount = price.unit_amount;
-    const description = `${setupFeePrice.name} - Annual Plan`;
+    const description = `${price.product.name} - Annual Plan`;
 
     // First create a customer in Stripe
     const stripeCustomer = await stripe.customers.create({

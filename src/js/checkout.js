@@ -89,20 +89,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const openCheckoutButtons = document.querySelectorAll('.open-checkout');
 
   openCheckoutButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
+    button.addEventListener('click', async (e) => {
       e.preventDefault();
       const plan = button.dataset.plan;
-      const planName = button.dataset.planName || (plan === 'annual' ? 'Annual Plan' : 'Monthly Plan');
-      const planPrice = button.dataset.planPrice || '$XX/mo';
-      const planDescription = button.dataset.planDescription || 'Kite website and communications platform';
       
       // Update the hidden input
       planInput.value = plan;
       
-      // Update the displayed plan information
-      document.getElementById('selected-plan-name').innerText = plan === 'annual' ? 'Kite Setup Fee' : planName;
-      document.getElementById('selected-plan-price').innerText = planPrice;
-      document.getElementById('selected-plan-description').innerText = planDescription;
+      // Set loading state for price info
+      document.getElementById('selected-plan-name').innerText = 'Loading...';
+      document.getElementById('selected-plan-price').innerText = 'Loading...';
+      document.getElementById('selected-plan-description').innerText = 'Loading product information...';
+      
+      try {
+        // Fetch price information from Stripe
+        const response = await fetch('/.netlify/functions/process-payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            action: 'getPriceInfo',
+            plan: plan // Send the plan type instead of a specific price ID
+          }),
+        });
+        
+        const priceInfo = await response.json();
+        
+        if (response.ok) {
+          // Update the displayed plan information with fetched data
+          document.getElementById('selected-plan-name').innerText = priceInfo.product.name;
+          document.getElementById('selected-plan-price').innerText = priceInfo.formattedPrice;
+          document.getElementById('selected-plan-description').innerText = priceInfo.product.description || '';
+          
+          // Update the totals
+          document.getElementById('subtotal-amount').innerText = priceInfo.formattedPrice;
+          document.getElementById('total-amount').innerText = priceInfo.formattedPrice;
+        } else {
+          // Fallback if price fetch fails - use generic placeholders to indicate error state
+          document.getElementById('selected-plan-name').innerText = 'Product information unavailable';
+          document.getElementById('selected-plan-price').innerText = 'Price unavailable';
+          document.getElementById('selected-plan-description').innerText = 'Unable to fetch product details from Stripe. Please try again later.';
+          console.error('Error fetching price information:', priceInfo.error);
+        }
+      } catch (error) {
+        console.error('Error fetching price information:', error);
+        // Fallback values - use generic placeholders to indicate error state
+        document.getElementById('selected-plan-name').innerText = 'Product information unavailable';
+        document.getElementById('selected-plan-price').innerText = 'Price unavailable';
+        document.getElementById('selected-plan-description').innerText = 'Unable to fetch product details from Stripe. Please try again later.';
+      }
       
       // For annual plan, fetch and show the promo code
       if (plan === 'annual') {
@@ -120,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify({ 
             action: 'getPromoCode',
-            promoId: 'promo_1RkwoPFBc7hwldVN1kqmowdG'
+            plan: plan // Just send the plan type, let server determine the promo ID
           }),
         })
         .then(response => response.json())
@@ -134,6 +170,40 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('discount-amount').innerText = data.percentOff > 0 ? 
               `${data.percentOff}% discount` : 
               `$${(data.amountOff/100).toFixed(2)} discount`;
+              
+            // If we have the price info, update the total with discount applied
+            const subtotalElement = document.getElementById('subtotal-amount');
+            const subtotalText = subtotalElement.innerText;
+            if (subtotalText !== 'Loading...') {
+              try {
+                // Extract the numeric value from the formatted price
+                const subtotalMatch = subtotalText.match(/\$([0-9.]+)/);
+                if (subtotalMatch && subtotalMatch[1]) {
+                  const subtotal = parseFloat(subtotalMatch[1]);
+                  if (!isNaN(subtotal)) {
+                    let newTotal = subtotal;
+                    
+                    // Apply discount
+                    if (data.percentOff > 0) {
+                      newTotal = subtotal * (1 - data.percentOff/100);
+                    } else if (data.amountOff > 0) {
+                      newTotal = subtotal - (data.amountOff/100);
+                    }
+                    
+                    // Format and update
+                    if (newTotal !== subtotal) {
+                      // Get the same format as the original price (including /year or /month)
+                      const format = subtotalText.includes('/') ? 
+                        subtotalText.substring(subtotalText.indexOf('/')) : '';
+                      
+                      document.getElementById('total-amount').innerText = `$${newTotal.toFixed(2)}${format}`;
+                    }
+                  }
+                }
+              } catch (e) {
+                console.error('Error calculating discount:', e);
+              }
+            }
           }
         })
         .catch(error => {
@@ -145,10 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('discount-message').textContent = '';
         document.querySelector('.discount').classList.add('hidden');
       }
-      
-      // Update the totals
-      document.getElementById('subtotal-amount').innerText = planPrice;
-      document.getElementById('total-amount').innerText = planPrice;
       
       // Open the checkout panel
       checkoutPanel.classList.add('open');
