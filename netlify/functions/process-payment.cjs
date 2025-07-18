@@ -11,8 +11,11 @@
 // Load environment variables 
 require('dotenv').config();
 
+// Get configuration from the single source of truth
+const envConfig = require('../../src/_data/env.cjs');
+
 // Set this to match the same value as in src/_data/env.cjs
-const USE_TEST_MODE = false;
+const USE_TEST_MODE = envConfig.isTestMode;
 
 // Choose the appropriate Stripe API key based on mode
 const stripeSecretKey = USE_TEST_MODE 
