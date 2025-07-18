@@ -20,10 +20,10 @@
         })();
     </script>
     <script>
-        window.stripePublishableKey = "{{ site.stripePublishableKey }}";
+        window.stripePublishableKey = "{{ site.stripePublishableKey | default('MISSING_KEY') }}";
         window.isTestMode = {{ site.isTestMode }};
-        if (!window.stripePublishableKey) {
-            console.error('Stripe publishable key is missing!');
+        if (!window.stripePublishableKey || window.stripePublishableKey === "MISSING_KEY") {
+            console.error("Stripe publishable key is missing!");
         }
     </script>
 </head>
