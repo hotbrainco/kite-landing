@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // This code sets up the credit card entry field.
   
   // Get the Stripe publishable key from the global scope (set in stripe-config.js)
-  const stripe = Stripe(window.stripePublishableKey);
+  const stripe = Stripe(`${window.stripePublishableKey}`);
   
   const elements = stripe.elements();
   const cardElement = elements.create('card', {
