@@ -3,7 +3,7 @@
 require('dotenv').config();
 
 // Set this to true for test mode, false for live mode
-const USE_TEST_MODE = true;
+const USE_TEST_MODE = false;
 
 module.exports = {
   // Mode indicator for templates to use if needed
