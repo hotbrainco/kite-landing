@@ -12,7 +12,7 @@
 require('dotenv').config();
 
 // Set this to match the same value as in src/_data/env.cjs
-const USE_TEST_MODE = true;
+const USE_TEST_MODE = false;
 
 // Choose the appropriate Stripe API key based on mode
 const stripeSecretKey = USE_TEST_MODE 
