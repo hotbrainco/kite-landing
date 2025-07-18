@@ -16,5 +16,5 @@ module.exports = {
   
   stripeSecretKey: USE_TEST_MODE
     ? process.env.STRIPE_API_KEY_SECRET_TEST
-    : process.env.STRIPE_API_KEY_SECRET
+    : process.env.STRIPE_API_KEY
 };
