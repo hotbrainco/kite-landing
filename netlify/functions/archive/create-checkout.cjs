@@ -1,3 +1,13 @@
+/**
+ * LEGACY CHECKOUT IMPLEMENTATION
+ * 
+ * This serverless function creates a Stripe Checkout session and redirects the user.
+ * It's a legacy implementation and has been replaced by process-payment.cjs for the 
+ * custom slide-in checkout form on launch.njk.
+ * 
+ * Last updated: July 2025
+ */
+
 // Load environment variables
 require('dotenv').config();
 

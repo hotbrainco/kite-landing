@@ -1,0 +1,87 @@
+<div id="checkout-panel" class="checkout-panel">
+  <div class="checkout-panel-header">
+    <h3>Complete Your Order</h3>
+    <button id="close-checkout">&times;</button>
+  </div>
+  
+  <!-- Order Summary Section -->
+  <div class="checkout-section order-summary">
+    <h4>Order Summary</h4>
+    <div class="product-details">
+      <div class="product-name-price">
+        <span id="selected-plan-name">Selected Plan</span>
+        <span id="selected-plan-price">$XX/mo</span>
+      </div>
+      <p id="selected-plan-description" class="product-description">Plan description will appear here</p>
+    </div>
+    
+    <!-- Discount Code Section -->
+    <div class="discount-code-section">
+      <div class="discount-input-group">
+        <input type="text" id="discount-code" placeholder="Discount code">
+        <button type="button" id="apply-discount">Apply</button>
+      </div>
+      <p id="discount-message"></p>
+    </div>
+    
+    <!-- Total Section -->
+    <div class="total-section">
+      <div class="subtotal">
+        <span>Subtotal</span>
+        <span id="subtotal-amount">$XX/mo</span>
+      </div>
+      <div class="discount hidden">
+        <span>Discount</span>
+        <span id="discount-amount">-$X/mo</span>
+      </div>
+      <div class="total">
+        <span>Total</span>
+        <span id="total-amount">$XX/mo</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Customer Information Form -->
+  <form id="checkout-form">
+    <input type="hidden" id="plan-input" name="plan">
+    <input type="hidden" id="discount-code-input" name="discountCode">
+    
+    <div class="checkout-section">
+      <h4>Customer Information</h4>
+      
+      <div class="form-row">
+        <label for="customer-name">Your Name</label>
+        <input type="text" id="customer-name" name="customerName" required>
+      </div>
+      
+      <div class="form-row">
+        <label for="church-name">Church Name</label>
+        <input type="text" id="church-name" name="churchName" required>
+      </div>
+      
+      <div class="form-row">
+        <label for="customer-email">Email</label>
+        <input type="email" id="customer-email" name="customerEmail" required>
+      </div>
+      
+      <div class="form-row">
+        <label for="customer-phone">Phone (optional)</label>
+        <input type="tel" id="customer-phone" name="customerPhone">
+      </div>
+    </div>
+    
+    <div class="checkout-section">
+      <h4>Payment Details</h4>
+      <div class="form-row">
+        <label for="card-element">Credit or debit card</label>
+        <div id="card-element">
+          <!-- A Stripe Element will be inserted here. -->
+        </div>
+        <!-- Used to display form errors. -->
+        <div id="card-errors" role="alert"></div>
+      </div>
+    </div>
+    
+    <button type="submit" class="submit-button">Complete Purchase</button>
+  </form>
+</div>

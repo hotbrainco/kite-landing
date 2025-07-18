@@ -1,4 +1,11 @@
-// src/js/checkout.js
+/**
+ * ACTIVE CHECKOUT IMPLEMENTATION
+ * 
+ * This file handles the custom slide-in checkout form on launch.njk
+ * It processes payments through netlify/functions/process-payment.cjs
+ * 
+ * Last updated: July 2025
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
   // Check if we have a valid Stripe key
@@ -97,12 +104,47 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('selected-plan-price').innerText = planPrice;
       document.getElementById('selected-plan-description').innerText = planDescription;
       
-      // For annual plan, show the promo code is activated
+      // For annual plan, fetch and show the promo code
       if (plan === 'annual') {
-        document.getElementById('discount-message').textContent = 'Promo code promo_1RkwoPFBc7hwldVN1kqmowdG is activated';
-        document.getElementById('discount-message').style.color = '#28a745';
+        // Show loading message
+        document.getElementById('discount-message').textContent = 'Loading promotion details...';
+        document.getElementById('discount-message').style.color = '#666';
         document.querySelector('.discount').classList.remove('hidden');
-        document.getElementById('discount-amount').innerText = 'Promotional discount applied';
+        document.getElementById('discount-amount').innerText = 'Checking...';
+        
+        // Fetch the actual promo code from Stripe
+        fetch(`/.netlify/functions/get-promo-code?promoId=promo_1RkwoPFBc7hwldVN1kqmowdG`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.code) {
+              // Show the actual promo code
+              document.getElementById('discount-message').textContent = `Promo code ${data.code} is activated`;
+              document.getElementById('discount-message').style.color = '#28a745';
+              
+              // Show discount percentage if available
+              if (data.percentOff) {
+                document.getElementById('discount-amount').innerText = `${data.percentOff}% discount applied`;
+              } else if (data.amountOff) {
+                document.getElementById('discount-amount').innerText = `$${(data.amountOff/100).toFixed(2)} discount applied`;
+              } else {
+                document.getElementById('discount-amount').innerText = 'Promotional discount applied';
+              }
+              
+              // Store the promo ID in a hidden field
+              discountCodeInput.value = data.code;
+            } else {
+              // Handle error
+              document.getElementById('discount-message').textContent = 'Could not load promotion details';
+              document.getElementById('discount-message').style.color = '#fa755a';
+              document.querySelector('.discount').classList.add('hidden');
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching promo code:', error);
+            document.getElementById('discount-message').textContent = 'Could not load promotion details';
+            document.getElementById('discount-message').style.color = '#fa755a';
+            document.querySelector('.discount').classList.add('hidden');
+          });
       } else {
         document.getElementById('discount-message').textContent = '';
         document.querySelector('.discount').classList.add('hidden');
