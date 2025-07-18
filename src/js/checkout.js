@@ -106,45 +106,42 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // For annual plan, fetch and show the promo code
       if (plan === 'annual') {
-        // Show loading message
-        document.getElementById('discount-message').textContent = 'Loading promotion details...';
-        document.getElementById('discount-message').style.color = '#666';
+        // Show loading state
+        document.getElementById('discount-message').textContent = 'Loading promotion...';
+        document.getElementById('discount-message').style.color = '#28a745';
         document.querySelector('.discount').classList.remove('hidden');
         document.getElementById('discount-amount').innerText = 'Checking...';
         
         // Fetch the actual promo code from Stripe
-        fetch(`/.netlify/functions/get-promo-code?promoId=promo_1RkwoPFBc7hwldVN1kqmowdG`)
-          .then(response => response.json())
-          .then(data => {
-            if (data.code) {
-              // Show the actual promo code
-              document.getElementById('discount-message').textContent = `Promo code ${data.code} is activated`;
-              document.getElementById('discount-message').style.color = '#28a745';
-              
-              // Show discount percentage if available
-              if (data.percentOff) {
-                document.getElementById('discount-amount').innerText = `${data.percentOff}% discount applied`;
-              } else if (data.amountOff) {
-                document.getElementById('discount-amount').innerText = `$${(data.amountOff/100).toFixed(2)} discount applied`;
-              } else {
-                document.getElementById('discount-amount').innerText = 'Promotional discount applied';
-              }
-              
-              // Store the promo ID in a hidden field
-              discountCodeInput.value = data.code;
-            } else {
-              // Handle error
-              document.getElementById('discount-message').textContent = 'Could not load promotion details';
-              document.getElementById('discount-message').style.color = '#fa755a';
-              document.querySelector('.discount').classList.add('hidden');
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching promo code:', error);
-            document.getElementById('discount-message').textContent = 'Could not load promotion details';
-            document.getElementById('discount-message').style.color = '#fa755a';
-            document.querySelector('.discount').classList.add('hidden');
-          });
+        fetch('/.netlify/functions/process-payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            action: 'getPromoCode',
+            promoId: 'promo_1RkwoPFBc7hwldVN1kqmowdG',
+            plan: 'annual'
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('discount-message').textContent = 'Promotion available';
+            document.getElementById('discount-amount').innerText = 'Promotional discount will be applied';
+          } else {
+            // Show the actual promo code name
+            document.getElementById('discount-message').textContent = `Promo code "${data.code}" is automatically applied`;
+            document.getElementById('discount-amount').innerText = data.percentOff > 0 ? 
+              `${data.percentOff}% discount` : 
+              `$${(data.amountOff/100).toFixed(2)} discount`;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching promo code:', error);
+          document.getElementById('discount-message').textContent = 'Promotion available';
+          document.getElementById('discount-amount').innerText = 'Promotional discount will be applied';
+        });
       } else {
         document.getElementById('discount-message').textContent = '';
         document.querySelector('.discount').classList.add('hidden');

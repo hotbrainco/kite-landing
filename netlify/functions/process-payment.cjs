@@ -3,6 +3,7 @@
  * 
  * This serverless function processes payments from the custom slide-in checkout form on launch.njk
  * It works with src/js/checkout.js to handle payment processing directly in the checkout panel
+ * Also handles fetching promotion code information from Stripe
  * 
  * Last updated: July 2025
  */
@@ -11,7 +12,7 @@
 require('dotenv').config();
 
 // Set this to match the same value as in src/_data/env.cjs
-const USE_TEST_MODE = false;
+const USE_TEST_MODE = true;
 
 // Choose the appropriate Stripe API key based on mode
 const stripeSecretKey = USE_TEST_MODE 
@@ -22,12 +23,12 @@ const stripe = require('stripe')(stripeSecretKey);
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
 
   try {
-    const { token, plan, customer } = JSON.parse(event.body);
-
+    const requestData = JSON.parse(event.body);
+    
     // Product and price configuration from Stripe
     const setupFeePriceMap = {
       monthly: 'price_1RkulYFBc7hwldVNmNlB1zkJ', // Setup fee for monthly, $199
@@ -44,7 +45,45 @@ exports.handler = async (event) => {
         'promo_1RkwoPFBc7hwldVN1kqmowdG',  // Annual promo code - Launch special
       ],
     };
-
+    
+    // Check if this is a request to get promo code details
+    if (requestData.action === 'getPromoCode') {
+      const { promoId, plan } = requestData;
+      
+      // Validate promo ID
+      if (!promoId) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: 'Missing promotion ID' })
+        };
+      }
+      
+      try {
+        // Fetch the promotion code details from Stripe
+        const promotionCode = await stripe.promotionCodes.retrieve(promoId);
+        
+        // Return the user-friendly code and discount details
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ 
+            code: promotionCode.code,
+            percentOff: promotionCode.coupon?.percent_off || 0,
+            amountOff: promotionCode.coupon?.amount_off || 0,
+            name: `${promotionCode.code} - ${promotionCode.coupon?.percent_off || 0}% off`
+          })
+        };
+      } catch (error) {
+        console.error('Error fetching promotion code:', error);
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: 'Promotion code not found' })
+        };
+      }
+    }
+    
+    // Otherwise, process a payment
+    const { token, plan, customer } = requestData;
+    
     // Get the correct price ID based on plan
     const priceId = setupFeePriceMap[plan];
     if (!priceId) {
