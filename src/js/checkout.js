@@ -8,358 +8,132 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Check if we have a valid Stripe key
-  if (!window.STRIPE_PUBLISHABLE_KEY || window.STRIPE_PUBLISHABLE_KEY === "") {
-    console.error("Stripe publishable key is missing or empty!");
-    return; // Exit early to prevent errors
-  }
-  
-  // Display test mode indicator if applicable
-  if (window.STRIPE_TEST_MODE) {
-    const testBanner = document.createElement('div');
-    testBanner.style.background = '#f0ad4e';
-    testBanner.style.color = 'black';
-    testBanner.style.padding = '5px 10px';
-    testBanner.style.textAlign = 'center';
-    testBanner.style.fontWeight = 'bold';
-    testBanner.textContent = '⚠️ TEST MODE - No real charges will be made ⚠️';
-    
-    // Add to the top of the checkout panel
-    const checkoutPanel = document.querySelector('.checkout-panel');
-    if (checkoutPanel) {
-      checkoutPanel.insertBefore(testBanner, checkoutPanel.firstChild);
-    }
-  }
-  
-  const stripe = Stripe(window.STRIPE_PUBLISHABLE_KEY); // Use the global variable
-  const elements = stripe.elements();
-
-  const style = {
-    base: {
-      color: '#32325d',
-      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-      fontSmoothing: 'antialiased',
-      fontSize: '16px',
-      '::placeholder': {
-        color: '#aab7c4'
-      }
-    },
-    invalid: {
-      color: '#fa755a',
-      iconColor: '#fa755a'
-    }
-  };
-
-  // Create card element with additional options to handle both US and Canadian postal codes
-  const cardOptions = {
-    style: style,
-    hidePostalCode: false, // Show the postal code field
-    zipCode: true, // Enable zip code validation
-    iconStyle: 'solid',
-  };
-
-  const card = elements.create('card', cardOptions);
-  card.mount('#card-element');
-
-  // Listen for changes in the card element
-  card.addEventListener('change', (event) => {
-    if (event.error) {
-      formError.textContent = event.error.message;
-    } else {
-      formError.textContent = '';
-    }
-    
-    // Check if the event contains country info (when user selects a country)
-    if (event.country) {
-      console.log(`Country selected: ${event.country}`);
-      // You could adjust UI based on country if needed
-    }
-  });
-
   const checkoutPanel = document.getElementById('checkout-panel');
-  const closeCheckout = document.getElementById('close-checkout');
-  const checkoutForm = document.getElementById('checkout-form');
-  const planInput = document.getElementById('plan-input');
-  const discountCodeInput = document.getElementById('discount-code-input');
-  const discountCode = document.getElementById('discount-code');
-  const applyDiscountButton = document.getElementById('apply-discount');
-  const discountMessage = document.getElementById('discount-message');
-  const formError = document.getElementById('card-errors');
-
   const openCheckoutButtons = document.querySelectorAll('.open-checkout');
+  const closeCheckoutButton = document.getElementById('close-checkout');
+  const planInput = document.getElementById('plan-input');
+  const orderLineItems = document.getElementById('order-line-items');
+  const planDescription = document.getElementById('selected-plan-description');
+  const subtotalAmount = document.getElementById('subtotal-amount');
+  const totalAmount = document.getElementById('total-amount');
+  const discountSection = document.querySelector('.discount');
+  const discountAmountEl = document.getElementById('discount-amount');
+  const discountMessage = document.getElementById('discount-message');
+
+  // Helper to format currency
+  const formatCurrency = (amount, currency = 'usd', interval = null) => {
+    const value = amount / 100;
+    const options = { style: 'currency', currency };
+    // show fractions for cents only if non-zero
+    if (value % 1 !== 0) {
+      options.minimumFractionDigits = 2;
+    }
+    const formatted = new Intl.NumberFormat('en-US', options).format(value);
+    return interval ? `${formatted}/${interval}` : formatted;
+  };
+
+  // Renders the entire order summary based on data from the server
+  const renderOrderSummary = (lineItems, promo) => {
+    if (!lineItems || lineItems.length === 0) {
+      orderLineItems.innerHTML = `<div class='product-name-price'><span>Product information unavailable</span><span></span></div>`;
+      planDescription.innerText = 'Unable to fetch product details. Please try again later.';
+      subtotalAmount.innerText = 'N/A';
+      totalAmount.innerText = 'N/A';
+      return;
+    }
+
+    let html = '';
+    let subtotal = 0;
+    let total = 0;
+    const descriptions = [];
+
+    lineItems.forEach(item => {
+      subtotal += item.unitAmount;
+      descriptions.push(item.description);
+
+      let finalPrice = item.unitAmount;
+      let priceHtml = `<span>${item.formattedPrice}</span>`;
+
+      // Apply discount only to recurring items (which have an 'interval')
+      if (promo && promo.coupon && item.interval) {
+        const coupon = promo.coupon;
+        let originalPrice = item.unitAmount;
+        
+        if (coupon.percent_off) {
+          finalPrice = originalPrice * (1 - coupon.percent_off / 100);
+        } else if (coupon.amount_off) {
+          finalPrice = Math.max(0, originalPrice - coupon.amount_off);
+        }
+
+        if (finalPrice < originalPrice) {
+          const newPriceFormatted = formatCurrency(finalPrice, item.currency, item.interval);
+          priceHtml = `<span><s>${item.formattedPrice}</s> ${newPriceFormatted}</span>`;
+        }
+      }
+      
+      total += finalPrice;
+      html += `<div class="product-name-price"><span>${item.name}</span>${priceHtml}</div>`;
+    });
+
+    orderLineItems.innerHTML = html;
+    planDescription.innerText = descriptions.filter(Boolean).join(' ');
+    subtotalAmount.innerText = formatCurrency(subtotal);
+    totalAmount.innerText = formatCurrency(total);
+
+    if (promo && promo.coupon) {
+      discountSection.classList.remove('hidden');
+      const coupon = promo.coupon;
+      const discountString = coupon.percent_off ? `${coupon.percent_off}% discount` : `${formatCurrency(coupon.amount_off, coupon.currency)} discount`;
+      discountAmountEl.innerText = discountString;
+      discountMessage.textContent = `Promo code "${promo.code}" is automatically applied.`;
+    } else {
+      discountSection.classList.add('hidden');
+      discountMessage.textContent = '';
+    }
+  };
+
+  // Set loading state for the checkout panel
+  const setLoadingState = () => {
+    orderLineItems.innerHTML = `<div class="product-name-price"><span>Loading...</span><span></span></div>`;
+    planDescription.innerText = 'Fetching details...';
+    subtotalAmount.innerText = '...';
+    totalAmount.innerText = '...';
+    discountMessage.textContent = '';
+    discountSection.classList.add('hidden');
+  };
 
   openCheckoutButtons.forEach(button => {
     button.addEventListener('click', async (e) => {
       e.preventDefault();
+      checkoutPanel.classList.add('open');
       const plan = button.dataset.plan;
-      
-      // Update the hidden input
       planInput.value = plan;
-      
-      // Set loading state for price info
-      const orderLineItems = document.getElementById('order-line-items');
-      orderLineItems.innerHTML = `<div class="product-name-price"><span>Loading...</span><span>Loading...</span></div>`;
-      document.getElementById('selected-plan-description').innerText = 'Loading product information...';
+      setLoadingState();
 
       try {
-        // Fetch price information from Stripe
+        // Fetch all price and promo info in one go from the server
         const response = await fetch('/.netlify/functions/process-payment', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            action: 'getPriceInfo',
-            plan: plan
-          }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getPriceInfo', plan: plan }),
         });
-        const data = await response.json();
-
-        if (response.ok && data.lineItems && Array.isArray(data.lineItems)) {
-          // Render all line items
-          let html = '';
-          let subtotal = 0;
-          let description = [];
-          data.lineItems.forEach(item => {
-            html += `<div class="product-name-price"><span>${item.name}</span><span>${item.formattedPrice}</span></div>`;
-            subtotal += item.unitAmount;
-            if (item.description) description.push(item.description);
-          });
-          orderLineItems.innerHTML = html;
-          document.getElementById('selected-plan-description').innerText = description.join(' ');
-          // Show subtotal and total (before discount)
-          document.getElementById('subtotal-amount').innerText = `$${(subtotal / 100).toFixed(2)}`;
-          document.getElementById('total-amount').innerText = `$${(subtotal / 100).toFixed(2)}`;
-        } else {
-          // Fallback if price fetch fails
-          orderLineItems.innerHTML = `<div class='product-name-price'><span>Product information unavailable</span><span>Price unavailable</span></div>`;
-          document.getElementById('selected-plan-description').innerText = 'Unable to fetch product details from Stripe. Please try again later.';
-          document.getElementById('subtotal-amount').innerText = 'N/A';
-          document.getElementById('total-amount').innerText = 'N/A';
-          console.error('Error fetching price information:', data.error);
-        }
-      } catch (error) {
-        orderLineItems.innerHTML = `<div class='product-name-price'><span>Product information unavailable</span><span>Price unavailable</span></div>`;
-        document.getElementById('selected-plan-description').innerText = 'Unable to fetch product details from Stripe. Please try again later.';
-        document.getElementById('subtotal-amount').innerText = 'N/A';
-        document.getElementById('total-amount').innerText = 'N/A';
-        console.error('Error fetching price information:', error);
-      }
-      
-      // For annual plan, fetch and show the promo code
-      if (plan === 'annual') {
-        // Show loading state
-        document.getElementById('discount-message').textContent = 'Loading promotion...';
-        document.getElementById('discount-message').style.color = '#28a745';
-        document.querySelector('.discount').classList.remove('hidden');
-        document.getElementById('discount-amount').innerText = 'Checking...';
         
-        // Fetch the actual promo code from Stripe
-        fetch('/.netlify/functions/process-payment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            action: 'getPromoCode',
-            plan: plan // Just send the plan type, let server determine the promo ID
-          }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            document.getElementById('discount-message').textContent = 'Promotion available';
-            document.getElementById('discount-amount').innerText = 'Promotional discount will be applied';
-          } else {
-            // Show the actual promo code name
-            document.getElementById('discount-message').textContent = `Promo code "${data.code}" is automatically applied`;
-            document.getElementById('discount-amount').innerText = data.percentOff > 0 ? 
-              `${data.percentOff}% discount` : 
-              `$${(data.amountOff/100).toFixed(2)} discount`;
-              
-            // If we have the price info, update the total with discount applied
-            const subtotalElement = document.getElementById('subtotal-amount');
-            const subtotalText = subtotalElement.innerText;
-            if (subtotalText !== 'Loading...') {
-              try {
-                // Extract the numeric value from the formatted price
-                const subtotalMatch = subtotalText.match(/\$([0-9.]+)/);
-                if (subtotalMatch && subtotalMatch[1]) {
-                  const subtotal = parseFloat(subtotalMatch[1]);
-                  if (!isNaN(subtotal)) {
-                    let newTotal = subtotal;
-                    
-                    // Apply discount
-                    if (data.percentOff > 0) {
-                      newTotal = subtotal * (1 - data.percentOff/100);
-                    } else if (data.amountOff > 0) {
-                      newTotal = subtotal - (data.amountOff/100);
-                    }
-                    
-                    // Format and update
-                    if (newTotal !== subtotal) {
-                      // Get the same format as the original price (including /year or /month)
-                      const format = subtotalText.includes('/') ? 
-                        subtotalText.substring(subtotalText.indexOf('/')) : '';
-                      
-                      document.getElementById('total-amount').innerText = `$${newTotal.toFixed(2)}${format}`;
-                    }
-                  }
-                }
-              } catch (e) {
-                console.error('Error calculating discount:', e);
-              }
-            }
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching promo code:', error);
-          document.getElementById('discount-message').textContent = 'Promotion available';
-          document.getElementById('discount-amount').innerText = 'Promotional discount will be applied';
-        });
-      } else {
-        document.getElementById('discount-message').textContent = '';
-        document.querySelector('.discount').classList.add('hidden');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch pricing information.');
+        }
+        
+        const data = await response.json();
+        renderOrderSummary(data.lineItems, data.promo);
+
+      } catch (error) {
+        console.error('Error fetching price information:', error);
+        renderOrderSummary(null, null); // Render error state
       }
-      
-      // Open the checkout panel
-      checkoutPanel.classList.add('open');
     });
   });
 
-  if (closeCheckout) {
-    closeCheckout.addEventListener('click', () => {
-      checkoutPanel.classList.remove('open');
-    });
-  }
-  
-  // Handle discount code application
-  if (applyDiscountButton) {
-    applyDiscountButton.addEventListener('click', async () => {
-      const code = discountCode.value.trim();
-      if (!code) {
-        discountMessage.textContent = 'Please enter a discount code';
-        discountMessage.style.color = '#fa755a';
-        return;
-      }
-      
-      applyDiscountButton.disabled = true;
-      applyDiscountButton.textContent = 'Checking...';
-      
-      try {
-        // This would be a real API call to validate the discount code
-        // For now, we'll simulate with a timeout
-        setTimeout(() => {
-          // Demo: Accept "LAUNCH" as a valid 20% discount
-          if (code.toUpperCase() === 'LAUNCH') {
-            const subtotalElement = document.getElementById('subtotal-amount');
-            const subtotalText = subtotalElement.innerText;
-            const subtotal = parseFloat(subtotalText.replace(/[^0-9.-]+/g, ''));
-            
-            if (!isNaN(subtotal)) {
-              const discountAmount = subtotal * 0.2; // 20% discount
-              const newTotal = subtotal - discountAmount;
-              
-              // Update discount display
-              document.getElementById('discount-amount').innerText = 
-                `-$${discountAmount.toFixed(2)}/mo`;
-              document.getElementById('total-amount').innerText = 
-                `$${newTotal.toFixed(2)}/mo`;
-              
-              // Show the discount row
-              document.querySelector('.discount').classList.remove('hidden');
-              
-              // Update hidden input
-              discountCodeInput.value = code;
-              
-              // Show success message
-              discountMessage.textContent = 'Discount applied: 20% off';
-              discountMessage.style.color = '#28a745';
-            }
-          } else {
-            discountMessage.textContent = 'Invalid discount code';
-            discountMessage.style.color = '#fa755a';
-            discountCodeInput.value = '';
-          }
-          
-          applyDiscountButton.disabled = false;
-          applyDiscountButton.textContent = 'Apply';
-        }, 1000);
-      } catch (error) {
-        discountMessage.textContent = 'Error checking discount code';
-        discountMessage.style.color = '#fa755a';
-        applyDiscountButton.disabled = false;
-        applyDiscountButton.textContent = 'Apply';
-      }
-    });
-  }
-
-  if (checkoutForm) {
-    checkoutForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const submitButton = event.target.querySelector('button');
-      submitButton.disabled = true;
-
-      // Get customer information
-      const customerName = document.getElementById('customer-name').value;
-      const customerEmail = document.getElementById('customer-email').value;
-      const customerPhone = document.getElementById('customer-phone').value;
-      
-      // Prepare billing details for Stripe
-      const billingDetails = {
-        name: customerName,
-        email: customerEmail,
-        phone: customerPhone,
-      };
-
-      // Create token with billing details
-      const { token, error } = await stripe.createToken(card, { 
-        name: customerName, 
-        // The card Element automatically collects postal code
-      });
-
-      if (error) {
-        formError.textContent = error.message;
-        submitButton.disabled = false;
-      } else {
-        formError.textContent = '';
-        
-        // Gather customer information
-        const customerData = {
-          name: document.getElementById('customer-name').value,
-          churchName: document.getElementById('church-name').value,
-          email: document.getElementById('customer-email').value,
-          phone: document.getElementById('customer-phone').value,
-          discountCode: discountCodeInput.value
-        };
-        
-        // Send token, plan, and customer data to your server
-        const response = await fetch('/.netlify/functions/process-payment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            token: token.id, 
-            plan: planInput.value,
-            customer: customerData
-          }),
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          // Handle successful payment
-          alert('Payment successful!');
-          checkoutPanel.classList.remove('open');
-          // maybe redirect to a thank you page
-          // window.location.href = '/thank-you';
-        } else {
-          // Handle payment failure
-          formError.textContent = result.error || 'An unknown error occurred.';
-        }
-        submitButton.disabled = false;
-      }
-    });
-  }
+  closeCheckoutButton.addEventListener('click', () => {
+    checkoutPanel.classList.remove('open');
+  });
 });
