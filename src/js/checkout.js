@@ -67,8 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (finalPrice < originalPrice) {
-          const newPriceFormatted = formatCurrency(finalPrice, item.currency, item.interval);
-          priceHtml = `<span><s>${originalPriceFormatted}</s> ${newPriceFormatted}</span>`;
+          // Format prices WITHOUT the interval for the strikethrough effect
+          const originalPriceNoInterval = formatCurrency(originalPrice, item.currency);
+          const newPriceNoInterval = formatCurrency(finalPrice, item.currency);
+          // Combine them and add the interval at the end
+          priceHtml = `<span><s>${originalPriceNoInterval}</s> ${newPriceNoInterval}/${item.interval}</span>`;
         }
       }
       
