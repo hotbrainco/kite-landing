@@ -90,9 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const discountString = coupon.percent_off ? `${coupon.percent_off}% discount` : `${formatCurrency(coupon.amount_off, coupon.currency)} discount`;
       discountAmountEl.innerText = discountString;
       discountMessage.textContent = `Promo code "${promo.code}" is automatically applied.`;
+      discountMessage.classList.add('applied');
     } else {
       discountSection.classList.add('hidden');
       discountMessage.textContent = '';
+      discountMessage.classList.remove('applied');
     }
   };
 
