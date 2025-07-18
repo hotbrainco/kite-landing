@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const originalPriceNoInterval = formatCurrency(originalPrice, item.currency);
           const newPriceNoInterval = formatCurrency(finalPrice, item.currency);
           // Combine them and add the interval at the end
-          priceHtml = `<span><s>${originalPriceNoInterval}</s> ${newPriceNoInterval}/${item.interval}</span>`;
+          priceHtml = `<span><s>${originalPriceNoInterval}</s> <span class="discounted-price">${newPriceNoInterval}</span>/${item.interval}</span>`;
         }
       }
       
