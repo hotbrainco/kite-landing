@@ -19,13 +19,6 @@
             }
         })();
     </script>
-    <script>
-        window.stripePublishableKey = {{ site.stripePublishableKey | default('MISSING_KEY') | dump }};
-        window.isTestMode = {{ site.isTestMode }};
-        if (!window.stripePublishableKey || window.stripePublishableKey === "MISSING_KEY") {
-            console.error("Stripe publishable key is missing!");
-        }
-    </script>
 </head>
 <body>
     {% include "header.njk" %}
