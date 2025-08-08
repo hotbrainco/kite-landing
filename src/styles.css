@@ -1632,7 +1632,6 @@ body.light-theme .pricing-btn:hover {
     .feature-card h3,
     .use-case-card h3 {
         font-size: 1.1rem;
-        margin-bottom: 0.5rem;
     }
     
     .feature-card p,
@@ -1837,6 +1836,7 @@ body.light-theme .hero p {
 .pricing-btn:hover {
     background: var(--primary);
     color: white !important; /* Manter o texto branco no hover */
+    transform: translateY(-2px);
 }
 
 .pricing-btn.featured {
@@ -2525,6 +2525,7 @@ body.light-theme .demo-icon {
     border-radius: 4px;
     font-size: 0.8rem;
     font-weight: 600;
+    margin-left: 0.5rem;
 }
 
 .pricing-grid {
@@ -2672,8 +2673,7 @@ body.light-theme .demo-icon {
 
 .contact-section {
     padding: 5rem 5%;
-    background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, transparent 60%),
-                linear-gradient(225deg, rgba(255, 101, 132, 0.1) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, transparent 60%), linear-gradient(225deg, rgba(255, 101, 132, 0.1) 0%, transparent 60%);
 }
         
 .contact-content {
@@ -2845,51 +2845,268 @@ body.light-theme .demo-icon {
     box-shadow: 0 6px 16px rgba(108, 99, 255, 0.3);
 }
 
+@media (max-width: 768px) {
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .contact-info {
+        padding: 1rem;
+    }
+    
+    .contact-info h1 {
+        font-size: 1.8rem;
+    }
+    
+    .form-container {
+        padding: 1.5rem;
+    }
+    
+    .form-heading h2 {
+        font-size: 1.5rem;
+    }
+}
+
+.get-started-section {
+    padding: 5rem 5%;
+    background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, transparent 60%),
+                linear-gradient(225deg, rgba(255, 101, 132, 0.1) 0%, transparent 60%);
+}
+
+.get-started-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+
+.terms-section {
+    padding: 5rem 5%;
+    background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, transparent 60%),
+                linear-gradient(225deg, rgba(255, 101, 132, 0.1) 0%, transparent 60%);
+}
+
+.terms-content {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--background-light);
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.terms-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--gradient-rainbow);
+    opacity: 0.7;
+}
+
+.terms-content h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    background: var(--gradient-rainbow);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.01em;
+}
+
+.terms-content h2 {
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem;
+    color: var(--primary);
+}
+
+.terms-content h3 {
+    font-size: 1.2rem;
+    margin: 1.5rem 0 0.75rem;
+    color: var(--text);
+}
+
+.terms-content p, .terms-content ul, .terms-content ol {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.terms-content ul, .terms-content ol {
+    padding-left: 2rem;
+}
+
+.terms-content li {
+    margin-bottom: 0.5rem;
+}
+
+.terms-content a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.terms-content a:hover {
+    text-decoration: underline;
+}
+
+.terms-content .last-updated {
+    font-style: italic;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(108, 99, 255, 0.2);
+    font-size: 0.9rem;
+}
+
+.terms-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.terms-tab {
+    padding: 0.75rem 1.5rem;
+    background: var(--background);
+    border-radius: 6px;
+    color: var(--text);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.terms-tab.active {
+    background: var(--primary);
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .terms-content {
+        padding: 2rem;
+    }
+    
+    .terms-content h1 {
+        font-size: 1.8rem;
+    }
+    
+    .terms-content h2 {
+        font-size: 1.3rem;
+    }
+    
+    .terms-tabs {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+.checkmark-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    text-align: left;
+}
+
+ul.checkmark-list {
+    padding-left: 0;
+}
+
+.checkmark-list li {
+    color: var(--text-light);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
 /* Pricing Overlay Styles */
 .pricing-overlay {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
+    right: 0;
+    bottom: 0;
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 10;
+    border-radius: 12px;
 }
 
 .overlay-content {
     text-align: center;
-    color: var(--text);
-    background: rgba(255, 255, 255, 0.8);
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
 }
 
-.overlay-content h3 {
-    font-size: 1.5rem;
+.overlay-content h2 {
+    color: var(--text);
+    font-size: 1.8rem;
+    font-weight: 700;
     margin-bottom: 1rem;
+    background: var(--gradient-rainbow);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .overlay-content p {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
+    color: var(--text-light);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
 }
 
-.overlay-content .cta-button {
+.overlay-button {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 2.5rem;
     background: var(--primary);
-    color: var(--text);
+    color: white !important;
+    font-weight: 600;
+    font-size: 1rem;
     text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background 0.3s ease;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.overlay-content .cta-button:hover {
+.overlay-button:hover {
     background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(108, 99, 255, 0.3);
+}
+
+/* Make pricing-grid container relative to position overlay */
+.pricing .pricing-grid {
+    position: relative;
+}
+
+/* Light theme adjustments for overlay */
+body.light-theme .pricing-overlay {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+body.light-theme .overlay-content h2 {
+    -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .overlay-content p {
+    color: var(--text-light);
 }
