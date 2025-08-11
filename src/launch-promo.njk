@@ -2,44 +2,20 @@
 layout: base.njk
 title: "Kite - The Website & Communications Platform for Churches"
 scripts: |
-  <!-- Handle Stripe Checkout redirect when user clicks "Get Started" -->
+  <!-- Use new checkout panel for Get Started buttons -->
   <script>
-  // Function to create a Checkout session by calling the Netlify function
-  const createCheckoutSession = async (interval) => {
-    try {
-      const res = await fetch('/.netlify/functions/create-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ interval: interval }),
-      });
-
-      const data = await res.json();
-
-      if (data.url) {
-        // Redirect to Stripe Checkout
-        window.location.href = data.url;
-      } else {
-        alert(data.error || 'An error occurred while creating the checkout session.');
-      }
-    } catch (err) {
-      alert('Network error or invalid response from server.');
-    }
-  };
-
-  // Ensure buttons exist and attach event listeners
   window.addEventListener('DOMContentLoaded', () => {
-    const monthlyBtn = document.getElementById('get-started-monthly');
-    const annualBtn = document.getElementById('get-started-annual');
-
-    if (monthlyBtn) {
-      monthlyBtn.addEventListener('click', () => createCheckoutSession('monthly'));
-    }
-
-    if (annualBtn) {
-      annualBtn.addEventListener('click', () => createCheckoutSession('annual'));
-    }
+    document.querySelectorAll('.get-started[data-plan]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Open checkout panel, pass plan type
+        if (window.openCheckoutPanel) {
+          window.openCheckoutPanel(btn.getAttribute('data-plan'));
+        } else {
+          alert('Checkout panel not available. Please try again later.');
+        }
+      });
+    });
   });
   </script>
 ---
@@ -171,7 +147,7 @@ scripts: |
           <li style="margin-left:30px">▸ Team Members</li>
           <li style="margin-left:30px">▸ Podcast Episodes</li>
         <li><i data-lucide="check"></i> Add, Ministries, Missions Partners, Team, and More!</li>
-				<li><i data-lucide="check"></i> Free & Paid Events with Multiple Ticket Types</li>
+        <li><i data-lucide="check"></i> Free & Paid Events with Multiple Ticket Types</li>
         <li><i data-lucide="check"></i> YouTube Channel Integration</li>
         <li><i data-lucide="check"></i> Regular Platform Updates</li>
         <li><i data-lucide="check"></i> Daily Backups</li>
@@ -186,55 +162,55 @@ scripts: |
     <!-- Right 2/3 column: Three stacked plans -->
     <div class="pricing-right">
       <!-- Promo A -- Annual Plan -->
-			<div class="pricing-card">
-				<div class="pricing-header">
-					<div class="popular-badge">Best Value 🎉</div>
-					<h3 class="amount">Unlimited Plan ‣ Annual</h3>
-					<p class="price-setup"><s>$499</s> <strong>$0</strong> Setup Fee (Public Launch Discount!)</p>
-					<div class="price">
-						<span class="amount" style="font-size:36px; font-weight:700;">$490</span><span style="font-size:0.6em;">/year</span>
-					</div>
-					<p>(equivalent to 2 months free vs. Monthly Plan)</p>
-					<!--p style="margin-top: 0.5em;">Then just $49/month <strong>(starts after 12 months)</strong></p-->
-				</div>
-				<!--ul class="checkmark-list">
-					<li><i data-lucide="check"></i> Access to All Modules</li>
-					<li><i data-lucide="check"></i> Unlimited Users, Events, Sermons and Subscribers</li>
-					<li><i data-lucide="check"></i> Unlmited Pages, Ministries, Missions, and Staff</li>
-					<li><i data-lucide="check"></i> Display Unlimited Videos YouTube Channel Integration</li>
-					<li><i data-lucide="check"></i> Regular Platform Updates</li>
-					<li><i data-lucide="check"></i> Daily Backups</li>
-					<li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
-					<li><i data-lucide="check"></i> Rock-Star Support!</li>
-					<li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
-				</ul-->
-				<a href="#" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
-			</div>
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <div class="popular-badge">Best Value 🎉</div>
+          <h3 class="amount">Unlimited Plan ‣ Annual</h3>
+          <p class="price-setup"><s>$499</s> <strong>$0</strong> Setup Fee (Public Launch Discount!)</p>
+          <div class="price">
+            <span class="amount" style="font-size:36px; font-weight:700;">$490</span><span style="font-size:0.6em;">/year</span>
+          </div>
+          <p>(equivalent to 2 months free vs. Monthly Plan)</p>
+          <!--p style="margin-top: 0.5em;">Then just $49/month <strong>(starts after 12 months)</strong></p-->
+        </div>
+        <!--ul class="checkmark-list">
+          <li><i data-lucide="check"></i> Access to All Modules</li>
+          <li><i data-lucide="check"></i> Unlimited Users, Events, Sermons and Subscribers</li>
+          <li><i data-lucide="check"></i> Unlmited Pages, Ministries, Missions, and Staff</li>
+          <li><i data-lucide="check"></i> Display Unlimited Videos YouTube Channel Integration</li>
+          <li><i data-lucide="check"></i> Regular Platform Updates</li>
+          <li><i data-lucide="check"></i> Daily Backups</li>
+          <li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
+          <li><i data-lucide="check"></i> Rock-Star Support!</li>
+          <li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
+        </ul-->
+        <a href="#" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
+      </div>
 
       <!-- Promo B - Monthly Plan -->
       <div class="pricing-card">
-				<div class="pricing-header">
-					<div class="popular-badge">Quickstart ⚡️</div>
-					<h3 class="amount">Unlimited Plan ‣ Monthly</h3>
-					<p class="price-setup"><s>$499</s> <strong>$199</strong> Setup Fee (Public Launch Discount!)</p>
-					<div class="price">
-						<span class="amount" style="font-size:36px; font-weight:700;">$49</span></span><span style="font-size:0.6em;">/month</span>
-					</div>
-					<!--p style="margin-top: 0.5em;">Then just $49/month <strong>(starts after 12 months)</strong></p-->
-				</div>
-				<!--ul class="checkmark-list">
-					<li><i data-lucide="check"></i> Access to All Modules</li>
-					<li><i data-lucide="check"></i> Unlimited Users, Events, Sermons and Subscribers</li>
-					<li><i data-lucide="check"></i> Unlmited Pages, Ministries, Missions, and Staff</li>
-					<li><i data-lucide="check"></i> Display Unlimited Videos YouTube Channel Integration</li>
-					<li><i data-lucide="check"></i> Regular Platform Updates</li>
-					<li><i data-lucide="check"></i> Daily Backups</li>
-					<li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
-					<li><i data-lucide="check"></i> Rock-Star Support!</li>
-					<li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
-				</ul-->
-				<a href="#" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
-			</div>
+        <div class="pricing-header">
+          <div class="popular-badge">Quickstart ⚡️</div>
+          <h3 class="amount">Unlimited Plan ‣ Monthly</h3>
+          <p class="price-setup"><s>$499</s> <strong>$199</strong> Setup Fee (Public Launch Discount!)</p>
+          <div class="price">
+            <span class="amount" style="font-size:36px; font-weight:700;">$49</span></span><span style="font-size:0.6em;">/month</span>
+          </div>
+          <!--p style="margin-top: 0.5em;">Then just $49/month <strong>(starts after 12 months)</strong></p-->
+        </div>
+        <!--ul class="checkmark-list">
+          <li><i data-lucide="check"></i> Access to All Modules</li>
+          <li><i data-lucide="check"></i> Unlimited Users, Events, Sermons and Subscribers</li>
+          <li><i data-lucide="check"></i> Unlmited Pages, Ministries, Missions, and Staff</li>
+          <li><i data-lucide="check"></i> Display Unlimited Videos YouTube Channel Integration</li>
+          <li><i data-lucide="check"></i> Regular Platform Updates</li>
+          <li><i data-lucide="check"></i> Daily Backups</li>
+          <li><i data-lucide="check"></i> Media Storage for Photos, Videos and Podcasts*</li>
+          <li><i data-lucide="check"></i> Rock-Star Support!</li>
+          <li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
+        </ul-->
+        <a href="#" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
+      </div>
 
       <!-- Custom Plan -->
       <div class="pricing-card"> ... Custom/Enterprise content here ... </div>
@@ -271,7 +247,7 @@ scripts: |
         <li><i data-lucide="check"></i> Rock-Star Support!</li>
         <li><i data-lucide="check"></i> Domain Name Management</strong></li>
       </ul>
-      <a href="#" id="get-started-annual" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
+      <a href="#" class="pricing-btn featured get-started" data-plan="annual">Get Started</a>
       <p style="font-size:0.85em; margin-top:2em">*Includes 25GB storage. Add more @ $5/month per 10GB.</p>
     </div>
     
@@ -297,7 +273,7 @@ scripts: |
         <li><i data-lucide="check"></i> Rock-Star Support!</li>
         <li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
       </ul>
-      <a href="#" id="get-started-monthly" class="pricing-btn featured get-started" data-plan="promoB">Get Started</a>
+      <a href="#" class="pricing-btn featured get-started" data-plan="monthly">Get Started</a>
       <p style="font-size:0.85em; margin-top:2em">*Includes 25GB storage. Add more @ $5/month per 10GB.</p>
     </div>
 
