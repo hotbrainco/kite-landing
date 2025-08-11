@@ -4,22 +4,6 @@ title: "Kite - The Website & Communications Platform for Churches"
 styles: /styles.css
 scripts: |
   <script src="/js/checkout.js"></script>
-  <!-- Use new checkout panel for Get Started buttons -->
-  <script>
-  window.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.get-started[data-plan]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        // Open checkout panel, pass plan type
-        if (window.openCheckoutPanel) {
-          window.openCheckoutPanel(btn.getAttribute('data-plan'));
-        } else {
-          alert('Checkout panel not available. Please try again later.');
-        }
-      });
-    });
-  });
-  </script>
 ---
 
 <section class="hero">
@@ -186,7 +170,7 @@ scripts: |
           <li><i data-lucide="check"></i> Rock-Star Support!</li>
           <li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
         </ul-->
-        <a href="#" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
+        <a href="#" class="pricing-btn featured open-checkout" data-plan="promoA">Get Started</a>
       </div>
 
       <!-- Promo B - Monthly Plan -->
@@ -211,7 +195,7 @@ scripts: |
           <li><i data-lucide="check"></i> Rock-Star Support!</li>
           <li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
         </ul-->
-        <a href="#" class="pricing-btn featured get-started" data-plan="promoA">Get Started</a>
+        <a href="#" class="pricing-btn featured open-checkout" data-plan="promoA">Get Started</a>
       </div>
 
       <!-- Custom Plan -->
@@ -249,7 +233,7 @@ scripts: |
         <li><i data-lucide="check"></i> Rock-Star Support!</li>
         <li><i data-lucide="check"></i> Domain Name Management</strong></li>
       </ul>
-      <a href="#" class="pricing-btn featured get-started" data-plan="annual">Get Started</a>
+      <a href="#" class="pricing-btn featured open-checkout" data-plan="annual">Get Started</a>
       <p style="font-size:0.85em; margin-top:2em">*Includes 25GB storage. Add more @ $5/month per 10GB.</p>
     </div>
     
@@ -275,7 +259,7 @@ scripts: |
         <li><i data-lucide="check"></i> Rock-Star Support!</li>
         <li><i data-lucide="check"></i> Domain Name Management <strong>(NEW!)</strong></li>
       </ul>
-      <a href="#" class="pricing-btn featured get-started" data-plan="monthly">Get Started</a>
+      <a href="#" class="pricing-btn featured open-checkout" data-plan="monthly">Get Started</a>
       <p style="font-size:0.85em; margin-top:2em">*Includes 25GB storage. Add more @ $5/month per 10GB.</p>
     </div>
 
