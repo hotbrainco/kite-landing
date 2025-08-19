@@ -22,11 +22,13 @@ const stripeSecretKey = envConfig.stripeSecretKey;
 
 const stripe = require('stripe')(stripeSecretKey);
 
-// Define price IDs - leave empty for user to fill in
-const PRICE_IDS = {
-  SETUP_FEE: envConfig.stripePriceSetupFee || '',
-  ANNUAL_SUBSCRIPTION: envConfig.stripePriceAnnualSubscription || ''
-};
+// Helper to get correct price IDs for the selected plan
+function getPriceIds(plan) {
+  return {
+    SETUP_FEE: plan === 'annual' ? envConfig.stripePriceSetupFeeAnnual : envConfig.stripePriceSetupFeeMonthly,
+    SUBSCRIPTION: plan === 'annual' ? envConfig.stripePriceSubscriptionAnnual : envConfig.stripePriceSubscriptionMonthly
+  };
+}
 
 // Define the promo code for the annual plan
 const ANNUAL_PROMO_CODE = envConfig.stripePromoAnnual || '';
@@ -96,10 +98,13 @@ exports.handler = async (event) => {
         };
       }
       try {
+        const priceIds = getPriceIds(plan);
         if (plan === 'annual') {
+          // Log the price IDs being used
+          console.log('Stripe Price IDs (Annual):', priceIds);
           // Fetch both setup fee (one-time) and annual subscription (recurring)
-          const setupFee = await stripe.prices.retrieve(PRICE_IDS.SETUP_FEE, { expand: ['product'] });
-          const annualSub = await stripe.prices.retrieve(PRICE_IDS.ANNUAL_SUBSCRIPTION, { expand: ['product'] });
+          const setupFee = await stripe.prices.retrieve(priceIds.SETUP_FEE, { expand: ['product'] });
+          const annualSub = await stripe.prices.retrieve(priceIds.SUBSCRIPTION, { expand: ['product'] });
 
           const lineItems = [
             {
@@ -156,8 +161,10 @@ exports.handler = async (event) => {
             body: JSON.stringify({ lineItems, promo })
           };
         } else if (plan === 'monthly') {
+          // Log the price ID being used for monthly
+          console.log('Stripe Price IDs (Monthly):', priceIds);
           // Only return the recurring line item for monthly
-          const monthly = await stripe.prices.retrieve(PRICE_IDS.ANNUAL_SUBSCRIPTION, { expand: ['product'] });
+          const monthly = await stripe.prices.retrieve(priceIds.SUBSCRIPTION, { expand: ['product'] });
           const lineItems = [
             {
               id: monthly.id,
@@ -206,8 +213,8 @@ exports.handler = async (event) => {
     }
 
     // Get the price ID for the setup fee based on plan
-    const priceId = PRICE_IDS.SETUP_FEE;
-    
+    const priceIds = getPriceIds(plan);
+    const priceId = priceIds.SETUP_FEE;
     // Fetch price information from Stripe
     const price = await stripe.prices.retrieve(priceId, {
       expand: ['product'] // Expand the product information
