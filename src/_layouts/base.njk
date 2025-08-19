@@ -38,13 +38,16 @@
     
     {% include "footer.njk" %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/script.js"></script>
-    <script>
-        lucide.createIcons();
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/script.js"></script>
+  <script>
+    // Inject Stripe config for frontend scripts
+    window.stripePublishableKey = "{{ env.stripePublishableKey }}";
+    window.isSandboxMode = {{ env.isSandboxMode | dump }};
+    lucide.createIcons();
+  </script>
     
-    {{ scripts | safe }}
+  {{ scripts | safe }}
 
 </body>
 </html>
