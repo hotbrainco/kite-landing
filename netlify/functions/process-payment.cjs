@@ -15,23 +15,21 @@ require('dotenv').config();
 const envConfig = require('../../src/_data/env.cjs');
 
 // Set this to match the same value as in src/_data/env.cjs
-const USE_TEST_MODE = envConfig.isTestMode;
+const USE_SANDBOX_MODE = envConfig.isSandboxMode;
 
 // Choose the appropriate Stripe API key based on mode
-const stripeSecretKey = USE_TEST_MODE 
-  ? process.env.STRIPE_API_KEY_SECRET_TEST 
-  : process.env.STRIPE_API_KEY_SECRET;
+const stripeSecretKey = envConfig.stripeSecretKey;
 
 const stripe = require('stripe')(stripeSecretKey);
 
-// Define price IDs - we'll fetch the actual details from Stripe
+// Define price IDs - leave empty for user to fill in
 const PRICE_IDS = {
-  SETUP_FEE: 'price_1RkulYFBc7hwldVNmNlB1zkJ',
-  ANNUAL_SUBSCRIPTION: 'price_1RktLMFBc7hwldVN0TBQhz9T'
+  SETUP_FEE: envConfig.stripePriceSetupFee || '',
+  ANNUAL_SUBSCRIPTION: envConfig.stripePriceAnnualSubscription || ''
 };
 
 // Define the promo code for the annual plan
-const ANNUAL_PROMO_CODE = 'promo_1RkwoPFBc7hwldVN1kqmowdG';
+const ANNUAL_PROMO_CODE = envConfig.stripePromoAnnual || '';
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
