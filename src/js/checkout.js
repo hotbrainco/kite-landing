@@ -186,7 +186,68 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('checkout-form');
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    // Payment processing logic will go here in a future step
-    console.log('Form submitted. Payment processing to be added.');
+
+    // Disable the button and show loading state
+    const submitButton = form.querySelector('.submit-button');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Processing...';
+
+    // Clear previous errors
+    const cardErrors = document.getElementById('card-errors');
+    cardErrors.textContent = '';
+
+    // Get customer info from the form
+    const customer = {
+      name: document.getElementById('customer-name').value,
+      churchName: document.getElementById('church-name').value,
+      email: document.getElementById('customer-email').value,
+      phone: document.getElementById('customer-phone').value
+    };
+    const plan = planInput.value;
+    const discountCode = document.getElementById('discount-code-input').value;
+
+    // Create Stripe token
+    const { token, error } = await stripe.createToken(cardElement);
+    if (error) {
+      cardErrors.textContent = error.message;
+      submitButton.disabled = false;
+      submitButton.textContent = 'Complete Purchase';
+      return;
+    }
+
+    // Send payment request to Netlify function
+    try {
+      const response = await fetch('/.netlify/functions/process-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: token.id,
+          plan,
+          customer,
+          discountCode
+        })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Payment failed.');
+      }
+
+      // Show success message
+      submitButton.textContent = 'Success!';
+      submitButton.classList.add('success');
+      cardErrors.textContent = '';
+      // Optionally close panel or show confirmation
+      setTimeout(() => {
+        checkoutPanel.classList.remove('open');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Complete Purchase';
+        submitButton.classList.remove('success');
+        form.reset();
+      }, 2000);
+    } catch (err) {
+      cardErrors.textContent = err.message;
+      submitButton.disabled = false;
+      submitButton.textContent = 'Complete Purchase';
+    }
   });
 });
