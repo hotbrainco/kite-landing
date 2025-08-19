@@ -239,7 +239,8 @@ exports.handler = async (event) => {
       amount: amount,
       currency: 'usd',
       description: description,
-      customer: stripeCustomer.id
+      customer: stripeCustomer.id,
+      receipt_email: customer.email // Stripe will send receipt email
     });
 
     return {
