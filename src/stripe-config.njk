@@ -2,7 +2,8 @@
 permalink: /js/stripe-config.js
 ---
 // Generated at build time by Eleventy
+
 window.STRIPE_PUBLISHABLE_KEY = "{{ env.stripePublishableKey }}";
-window.STRIPE_TEST_MODE = {{ env.isTestMode }};
+window.USE_SANDBOX_MODE = {{ env.isSandboxMode }};
 console.log("Stripe key:", window.STRIPE_PUBLISHABLE_KEY);
-console.log("Stripe mode:", window.STRIPE_TEST_MODE ? "TEST MODE" : "LIVE MODE");
+console.log("Stripe mode:", window.USE_SANDBOX_MODE ? "SANDBOX MODE" : "LIVE MODE");
