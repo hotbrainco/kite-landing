@@ -159,13 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Get the Stripe publishable key from the global scope (set in stripe-config.js)
   const stripe = Stripe(`${window.stripePublishableKey}`);
-  // Disable Apple Pay and Google Pay wallets to prevent 401 errors
-  const elements = stripe.elements({
-    wallets: {
-      applePay: false,
-      googlePay: false
-    }
-  });
+  // Initialize Stripe Elements (no unsupported wallets parameter)
+  const elements = stripe.elements();
   const cardElement = elements.create('card', {
     style: {
       base: {
