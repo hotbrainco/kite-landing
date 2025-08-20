@@ -260,9 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // Display customer email in the thank you message
       if (result.customerEmail) {
-        const successMsg = checkoutSuccess.querySelector('p');
-        if (successMsg) {
-          successMsg.innerHTML = `Your order has been successfully placed. We've sent a confirmation email to <strong>${result.customerEmail}</strong>.`;
+        const confirmationEmailEl = document.getElementById('confirmation-email');
+        if (confirmationEmailEl) {
+          confirmationEmailEl.textContent = result.customerEmail;
         }
       }
       
