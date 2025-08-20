@@ -99,48 +99,46 @@ exports.handler = async (event) => {
       }
       try {
         const priceIds = getPriceIds(plan);
+        let lineItems = [];
+        let promo = null;
+        // Fetch setup fee and subscription for both plans
+        const setupFee = await stripe.prices.retrieve(priceIds.SETUP_FEE, { expand: ['product'] });
+        const subscription = await stripe.prices.retrieve(priceIds.SUBSCRIPTION, { expand: ['product'] });
+
+        lineItems.push({
+          id: setupFee.id,
+          name: setupFee.product.name,
+          description: setupFee.product.description || '',
+          unitAmount: setupFee.unit_amount,
+          currency: setupFee.currency,
+          formattedPrice: `$${(setupFee.unit_amount / 100).toFixed(2)}`,
+          interval: null,
+          type: 'one_time',
+          product: {
+            id: setupFee.product.id,
+            name: setupFee.product.name,
+            description: setupFee.product.description || ''
+          }
+        });
+
+        lineItems.push({
+          id: subscription.id,
+          name: subscription.product.name,
+          description: subscription.product.description || '',
+          unitAmount: subscription.unit_amount,
+          currency: subscription.currency,
+          formattedPrice: `$${(subscription.unit_amount / 100).toFixed(2)}/${subscription.recurring.interval}`,
+          interval: subscription.recurring.interval,
+          type: 'recurring',
+          product: {
+            id: subscription.product.id,
+            name: subscription.product.name,
+            description: subscription.product.description || ''
+          }
+        });
+
+        // Fetch promo code for annual plan only
         if (plan === 'annual') {
-          // Log the price IDs being used
-          console.log('Stripe Price IDs (Annual):', priceIds);
-          // Fetch both setup fee (one-time) and annual subscription (recurring)
-          const setupFee = await stripe.prices.retrieve(priceIds.SETUP_FEE, { expand: ['product'] });
-          const annualSub = await stripe.prices.retrieve(priceIds.SUBSCRIPTION, { expand: ['product'] });
-
-          const lineItems = [
-            {
-              id: setupFee.id,
-              name: setupFee.product.name,
-              description: setupFee.product.description || '',
-              unitAmount: setupFee.unit_amount,
-              currency: setupFee.currency,
-              formattedPrice: `$${(setupFee.unit_amount / 100).toFixed(2)}`,
-              interval: null,
-              type: 'one_time',
-              product: {
-                id: setupFee.product.id,
-                name: setupFee.product.name,
-                description: setupFee.product.description || ''
-              }
-            },
-            {
-              id: annualSub.id,
-              name: annualSub.product.name,
-              description: annualSub.product.description || '',
-              unitAmount: annualSub.unit_amount,
-              currency: annualSub.currency,
-              formattedPrice: `$${(annualSub.unit_amount / 100).toFixed(2)}/${annualSub.recurring.interval}`,
-              interval: annualSub.recurring.interval,
-              type: 'recurring',
-              product: {
-                id: annualSub.product.id,
-                name: annualSub.product.name,
-                description: annualSub.product.description || ''
-              }
-            }
-          ];
-
-          // Also fetch the promotion code for the annual plan
-          let promo = null;
           try {
             const promotionCode = await stripe.promotionCodes.retrieve(ANNUAL_PROMO_CODE, {
               expand: ['coupon']
@@ -155,43 +153,12 @@ exports.handler = async (event) => {
           } catch (promoError) {
             console.warn(`Could not retrieve promo code ${ANNUAL_PROMO_CODE}:`, promoError.message);
           }
-
-          return {
-            statusCode: 200,
-            body: JSON.stringify({ lineItems, promo })
-          };
-        } else if (plan === 'monthly') {
-          // Log the price ID being used for monthly
-          console.log('Stripe Price IDs (Monthly):', priceIds);
-          // Only return the recurring line item for monthly
-          const monthly = await stripe.prices.retrieve(priceIds.SUBSCRIPTION, { expand: ['product'] });
-          const lineItems = [
-            {
-              id: monthly.id,
-              name: monthly.product.name,
-              description: monthly.product.description || '',
-              unitAmount: monthly.unit_amount,
-              currency: monthly.currency,
-              formattedPrice: `$${(monthly.unit_amount / 100).toFixed(2)}/${monthly.recurring.interval}`,
-              interval: monthly.recurring.interval,
-              type: 'recurring',
-              product: {
-                id: monthly.product.id,
-                name: monthly.product.name,
-                description: monthly.product.description || ''
-              }
-            }
-          ];
-          return {
-            statusCode: 200,
-            body: JSON.stringify({ lineItems })
-          };
-        } else {
-          return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Invalid plan type' })
-          };
         }
+
+        return {
+          statusCode: 200,
+          body: JSON.stringify(plan === 'annual' ? { lineItems, promo } : { lineItems })
+        };
       } catch (error) {
         console.error('Error fetching price information:', error);
         return {
