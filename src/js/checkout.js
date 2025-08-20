@@ -269,9 +269,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (result.receiptUrl) {
         const receiptLinkContainer = document.getElementById('receipt-link-container');
         const receiptLink = document.getElementById('receipt-link');
+        const receiptNote = document.getElementById('receipt-note');
         if (receiptLink && receiptLinkContainer) {
           receiptLink.href = result.receiptUrl;
           receiptLinkContainer.style.display = 'block';
+          if (receiptNote) {
+            receiptNote.style.display = 'block';
+          }
         }
       }
       
