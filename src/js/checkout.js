@@ -1,10 +1,8 @@
 /**
  * ACTIVE CHECKOUT IMPLEMENTATION
- * 
- * This file handles the custom slide-in checkout form on launch.njk
+ * * This file handles the custom slide-in checkout form on launch.njk
  * It processes payments through netlify/functions/process-payment.cjs
- * 
- * Last updated: July 2025
+ * * Last updated: August 2025
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const discountSection = document.querySelector('.discount');
   const discountAmountEl = document.getElementById('discount-amount');
   const discountMessage = document.getElementById('discount-message');
+  const form = document.getElementById('checkout-form');
+  const checkoutContent = document.getElementById('checkout-content');
+  const checkoutSuccess = document.getElementById('checkout-success');
 
   // Helper to format currency
   const formatCurrency = (amount, currency = 'usd', interval = null) => {
@@ -150,10 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  closeCheckoutButton.addEventListener('click', () => {
-    checkoutPanel.classList.remove('open');
-  });
-
   // --- STRIPE ELEMENTS INITIALIZATION ---
   // This code sets up the credit card entry field.
   
@@ -182,8 +179,26 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mount the card element to the div in your form
   cardElement.mount('#card-element');
   
+  closeCheckoutButton.addEventListener('click', () => {
+    checkoutPanel.classList.remove('open');
+
+    // Use a timeout to reset the form after the panel is closed
+    // to prevent a visual flash for the user.
+    setTimeout(() => {
+      checkoutContent.style.display = 'block';
+      checkoutSuccess.style.display = 'none';
+      
+      const submitButton = form.querySelector('.submit-button');
+      submitButton.disabled = false;
+      submitButton.textContent = 'Complete Purchase';
+      submitButton.classList.remove('success');
+      form.reset();
+      cardElement.clear();
+      document.getElementById('card-errors').textContent = '';
+    }, 500);
+  });
+  
   // Handle form submission
-  const form = document.getElementById('checkout-form');
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -232,18 +247,13 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(result.error || 'Payment failed.');
       }
 
-      // Show success message
+      // Show success message and hide the form content
+      checkoutContent.style.display = 'none';
+      checkoutSuccess.style.display = 'block';
       submitButton.textContent = 'Success!';
       submitButton.classList.add('success');
       cardErrors.textContent = '';
-      // Optionally close panel or show confirmation
-      setTimeout(() => {
-        checkoutPanel.classList.remove('open');
-        submitButton.disabled = false;
-        submitButton.textContent = 'Complete Purchase';
-        submitButton.classList.remove('success');
-        form.reset();
-      }, 2000);
+      
     } catch (err) {
       cardErrors.textContent = err.message;
       submitButton.disabled = false;

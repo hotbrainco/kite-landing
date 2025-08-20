@@ -17,13 +17,14 @@ const USE_SANDBOX_MODE = true;
 // =====================================================
 
 // ----------- SANDBOX -----------
-// -- Annual Plan (Sandbox) --
-const SANDBOX_SETUP_FEE_ANNUAL      = 'price_1RxrrIFQIhMSueoR197i5laR';      // <-- Sandbox Setup Fee (Annual) ID
+// Setup Fees
+const SANDBOX_SETUP_FEE_ANNUAL      = 'price_1RxrrIFQIhMSueoR197i5laR'; 
+const SANDBOX_SETUP_FEE_MONTHLY     = 'price_1RxrrjFQIhMSueoR74Et8jo3';  
+// Plans
 const SANDBOX_SUBSCRIPTION_ANNUAL   = 'price_1RxrtvFQIhMSueoR6kHFVotQ';   // <-- Sandbox Subscription (Annual) ID
-const SANDBOX_PROMO_ANNUAL          = 'promo_1RxsOEFQIhMSueoR0h7ciKw5';                // <-- Sandbox Promo Code (Annual) ID
-// -- Monthly Plan (Sandbox) --
-const SANDBOX_SETUP_FEE_MONTHLY     = 'price_1RxrrjFQIhMSueoR74Et8jo3';     // <-- Sandbox Setup Fee (Monthly) ID
 const SANDBOX_SUBSCRIPTION_MONTHLY  = 'price_1RxruWFQIhMSueoR57ixEjwr';  // <-- Sandbox Subscription (Monthly) ID
+// Promotions
+const SANDBOX_PROMO_ANNUAL          = 'promo_1RxsOEFQIhMSueoR0h7ciKw5';                // <-- Sandbox Promo Code (Annual) ID
 const SANDBOX_PROMO_MONTHLY         = 'promo_1RxsO4FQIhMSueoRlSKS92eY'; 
 
 // ----------- LIVE -----------
