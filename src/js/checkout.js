@@ -253,6 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
       submitButton.textContent = 'Success!';
       submitButton.classList.add('success');
       cardErrors.textContent = '';
+      // Display PaymentIntent ID as confirmation number
+      if (result.paymentIntentId) {
+        const confirmationNumberEl = document.getElementById('confirmation-number');
+        confirmationNumberEl.textContent = result.paymentIntentId;
+      }
       
     } catch (err) {
       cardErrors.textContent = err.message;
