@@ -258,6 +258,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const confirmationNumberEl = document.getElementById('confirmation-number');
         confirmationNumberEl.textContent = result.chargeId;
       }
+      // Display customer email in the thank you message
+      if (result.customerEmail) {
+        const successMsg = checkoutSuccess.querySelector('p');
+        if (successMsg) {
+          successMsg.innerHTML = `Your order has been successfully placed. We've sent a confirmation email to <strong>${result.customerEmail}</strong>.`;
+        }
+      }
       
     } catch (err) {
       cardErrors.textContent = err.message;
