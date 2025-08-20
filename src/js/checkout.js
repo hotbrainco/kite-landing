@@ -253,10 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
       submitButton.textContent = 'Success!';
       submitButton.classList.add('success');
       cardErrors.textContent = '';
-      // Display PaymentIntent ID as confirmation number
-      if (result.paymentIntentId) {
+      // Display Charge ID as confirmation number
+      if (result.chargeId) {
         const confirmationNumberEl = document.getElementById('confirmation-number');
-        confirmationNumberEl.textContent = result.paymentIntentId;
+        confirmationNumberEl.textContent = result.chargeId;
       }
       
     } catch (err) {
