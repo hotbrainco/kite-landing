@@ -276,6 +276,11 @@ document.addEventListener('DOMContentLoaded', () => {
           if (receiptNote) {
             receiptNote.style.display = 'block';
           }
+          // Always open receipt link in a new tab
+          receiptLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open(result.receiptUrl, '_blank', 'noopener');
+          });
         }
       }
       
