@@ -265,6 +265,15 @@ document.addEventListener('DOMContentLoaded', () => {
           confirmationEmailEl.textContent = result.customerEmail;
         }
       }
+      // Show Stripe receipt download link
+      if (result.receiptUrl) {
+        const receiptLinkContainer = document.getElementById('receipt-link-container');
+        const receiptLink = document.getElementById('receipt-link');
+        if (receiptLink && receiptLinkContainer) {
+          receiptLink.href = result.receiptUrl;
+          receiptLinkContainer.style.display = 'block';
+        }
+      }
       
     } catch (err) {
       cardErrors.textContent = err.message;

@@ -249,7 +249,8 @@ exports.handler = async (event) => {
         success: true, 
         chargeId: charge.id,
         customerName: customer.name,
-        customerEmail: customer.email
+        customerEmail: customer.email,
+        receiptUrl: charge.receipt_url
       }),
     };
   } catch (error) {
