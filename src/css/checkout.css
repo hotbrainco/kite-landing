@@ -1,11 +1,13 @@
 /* src/css/checkout.css */
 
 /* Checkout Panel Base Styles */
+
 .checkout-panel {
   position: fixed;
   top: 0;
-  right: -450px; /* Start off-screen */
-  width: 450px;
+  right: -100%; /* Start fully off-screen */
+  width: 100%;
+  max-width: 525px;
   height: 100%;
   background-color: white;
   box-shadow: -2px 0 5px rgba(0,0,0,0.5);
