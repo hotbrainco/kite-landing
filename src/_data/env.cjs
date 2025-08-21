@@ -70,5 +70,8 @@ module.exports = {
 
   stripePromoAnnual: USE_SANDBOX_MODE
     ? SANDBOX_PROMO_ANNUAL
-    : LIVE_PROMO_ANNUAL
+    : LIVE_PROMO_ANNUAL,
+  stripePromoMonthly: USE_SANDBOX_MODE
+    ? SANDBOX_PROMO_MONTHLY
+    : LIVE_PROMO_MONTHLY
 };
