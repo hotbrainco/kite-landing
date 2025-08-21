@@ -92,11 +92,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const discountValue = `<strong>${coupon.percent_off}%</strong>`;
       let durationText = '';
       if (coupon.duration === 'once') {
-        durationText = 'the first <strong>year</strong>'; // Assuming 'once' on an annual plan means first year
+        // Use 'year' for annual, 'month' for monthly
+        if (promo.code && promo.code.toLowerCase().includes('month')) {
+          durationText = 'the first <strong>month</strong>';
+        } else {
+          durationText = 'the first <strong>year</strong>';
+        }
       } else if (coupon.duration === 'repeating' && coupon.duration_in_months) {
         durationText = `the first <strong>${coupon.duration_in_months} months</strong>`;
       }
-      
+
       discountMessage.innerHTML = `Promo code <strong>${promo.code}</strong> (${discountValue} off ${durationText}) applied!`;
       discountMessage.classList.add('applied');
     } else {
