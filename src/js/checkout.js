@@ -56,36 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const originalPriceFormatted = formatCurrency(item.unitAmount, item.currency, item.interval);
       let priceHtml = `<span>${originalPriceFormatted}</span>`;
 
-      // Apply discount to setup fee (one_time) or recurring items
-      if (promo && promo.coupon) {
+      // Only apply discount to recurring plan price (not setup fee)
+      if (promo && promo.coupon && item.interval) {
         const coupon = promo.coupon;
         let originalPrice = item.unitAmount;
-
-        // Discount for setup fee (one_time)
-        if (item.type === 'one_time') {
-          if (coupon.percent_off) {
-            finalPrice = originalPrice * (1 - coupon.percent_off / 100);
-          } else if (coupon.amount_off) {
-            finalPrice = Math.max(0, originalPrice - coupon.amount_off);
-          }
-          if (finalPrice < originalPrice) {
-            const originalPriceNoInterval = formatCurrency(originalPrice, item.currency);
-            const newPriceNoInterval = formatCurrency(finalPrice, item.currency);
-            priceHtml = `<span><s>${originalPriceNoInterval}</s> <span class="discounted-price">${newPriceNoInterval}</span></span>`;
-          }
+        if (coupon.percent_off) {
+          finalPrice = originalPrice * (1 - coupon.percent_off / 100);
+        } else if (coupon.amount_off) {
+          finalPrice = Math.max(0, originalPrice - coupon.amount_off);
         }
-        // Discount for recurring items
-        else if (item.interval) {
-          if (coupon.percent_off) {
-            finalPrice = originalPrice * (1 - coupon.percent_off / 100);
-          } else if (coupon.amount_off) {
-            finalPrice = Math.max(0, originalPrice - coupon.amount_off);
-          }
-          if (finalPrice < originalPrice) {
-            const originalPriceNoInterval = formatCurrency(originalPrice, item.currency);
-            const newPriceNoInterval = formatCurrency(finalPrice, item.currency);
-            priceHtml = `<span><s>${originalPriceNoInterval}</s> <span class="discounted-price">${newPriceNoInterval}</span>/${item.interval}</span>`;
-          }
+        if (finalPrice < originalPrice) {
+          const originalPriceNoInterval = formatCurrency(originalPrice, item.currency);
+          const newPriceNoInterval = formatCurrency(finalPrice, item.currency);
+          priceHtml = `<span><s>${originalPriceNoInterval}</s> <span class="discounted-price">${newPriceNoInterval}</span>/${item.interval}</span>`;
         }
       }
 

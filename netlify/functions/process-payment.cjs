@@ -32,6 +32,7 @@ function getPriceIds(plan) {
 
 // Define the promo code for the annual plan
 const ANNUAL_PROMO_CODE = envConfig.stripePromoAnnual || '';
+const MONTHLY_PROMO_CODE = envConfig.stripePromoMonthly || '';
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -137,7 +138,7 @@ exports.handler = async (event) => {
           }
         });
 
-        // Fetch promo code for annual plan only
+        // Fetch promo code for annual or monthly plan
         if (plan === 'annual') {
           try {
             const promotionCode = await stripe.promotionCodes.retrieve(ANNUAL_PROMO_CODE, {
@@ -153,11 +154,26 @@ exports.handler = async (event) => {
           } catch (promoError) {
             console.warn(`Could not retrieve promo code ${ANNUAL_PROMO_CODE}:`, promoError.message);
           }
+        } else if (plan === 'monthly') {
+          try {
+            const promotionCode = await stripe.promotionCodes.retrieve(MONTHLY_PROMO_CODE, {
+              expand: ['coupon']
+            });
+            if (promotionCode.active) {
+              promo = {
+                id: promotionCode.id,
+                code: promotionCode.code,
+                coupon: promotionCode.coupon // Embed the entire coupon object
+              };
+            }
+          } catch (promoError) {
+            console.warn(`Could not retrieve promo code ${MONTHLY_PROMO_CODE}:`, promoError.message);
+          }
         }
 
         return {
           statusCode: 200,
-          body: JSON.stringify(plan === 'annual' ? { lineItems, promo } : { lineItems })
+          body: JSON.stringify({ lineItems, promo })
         };
       } catch (error) {
         console.error('Error fetching price information:', error);
