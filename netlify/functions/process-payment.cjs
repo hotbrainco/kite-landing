@@ -187,11 +187,11 @@ exports.handler = async (event) => {
     // Otherwise, process a payment
     const { token, plan, customer } = requestData;
     
-  // Validate plan
-  if (plan !== 'annual') {
+    // Validate plan (support annual and monthly)
+    if (plan !== 'annual' && plan !== 'monthly') {
       return {
         statusCode: 400,
-    body: JSON.stringify({ error: 'Only annual plan is currently supported.' }),
+        body: JSON.stringify({ error: 'Invalid plan. Supported: annual, monthly.' }),
       };
     }
 
@@ -203,8 +203,9 @@ exports.handler = async (event) => {
       expand: ['product'] // Expand the product information
     });
     
-    const amount = price.unit_amount;
-  const description = `${price.product.name} - Annual Plan`;
+  const amount = price.unit_amount;
+  const planLabel = plan === 'annual' ? 'Annual' : 'Monthly';
+  const description = `${price.product.name} (Launch Promo with ${planLabel} Plan Subscription)`;
 
     // First create a customer in Stripe
     const stripeCustomer = await stripe.customers.create({
