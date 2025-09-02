@@ -8,9 +8,16 @@ require('dotenv').config();
 // =====================================================
 // MODE CONFIGURATION
 // =====================================================
-
-// Set this to true for sandbox mode, false for live mode
-const USE_SANDBOX_MODE = false;
+// KITE_MODE controls which Stripe ID bank is used throughout the site.
+// Values:
+//   - 'sandbox'   => uses SANDBOX_* IDs and Stripe test keys
+//   - 'live'      => uses LIVE_* IDs and Stripe live keys
+//   - 'live_test' => uses LIVE_TEST_* IDs (your $1 Prices) with Stripe live keys
+// Set in Netlify: Site settings > Build & deploy > Environment > KITE_MODE
+// Set locally: add KITE_MODE to your .env file
+const MODE = process.env.KITE_MODE || 'live';
+const USE_SANDBOX_MODE = MODE === 'sandbox';
+const USE_LIVE_TEST_MODE = MODE === 'live_test';
 
 // =====================================================
 // STRIPE PRICE & PROMO ID CONSTANTS
@@ -28,14 +35,27 @@ const SANDBOX_PROMO_ANNUAL          = 'promo_1RxsOEFQIhMSueoR0h7ciKw5';         
 const SANDBOX_PROMO_MONTHLY         = 'promo_1RxsO4FQIhMSueoRlSKS92eY'; 
 
 // ----------- LIVE -----------
-// -- Annual Plan (Live) --
-const LIVE_SETUP_FEE_ANNUAL         = 'price_live_setup_fee_annual';         // <-- Live Setup Fee (Annual) ID
-const LIVE_SUBSCRIPTION_ANNUAL      = 'price_live_subscription_annual';      // <-- Live Subscription (Annual) ID
-const LIVE_PROMO_ANNUAL             = 'promo_live_annual';                   // <-- Live Promo Code (Annual) ID
-// -- Monthly Plan (Live) --
-const LIVE_SETUP_FEE_MONTHLY        = 'price_live_setup_fee_monthly';        // <-- Live Setup Fee (Monthly) ID
-const LIVE_SUBSCRIPTION_MONTHLY     = 'price_live_subscription_monthly';     // <-- Live Subscription (Monthly) ID
-const LIVE_PROMO_MONTHLY            = 'promo_live_monthly';                  // <-- Live Promo Code (Monthly) ID
+// Setup Fees
+const LIVE_SETUP_FEE_ANNUAL         = 'price_1RkulYFBc7hwldVNmNlB1zkJ';         // <-- Live Setup Fee (Annual) ID
+const LIVE_SETUP_FEE_MONTHLY        = 'price_1RkuvfFBc7hwldVNO6eoFrCN';        // <-- Live Setup Fee (Monthly) ID
+// Plans
+const LIVE_SUBSCRIPTION_ANNUAL      = 'price_1RktLMFBc7hwldVN0TBQhz9T';      // <-- Live Subscription (Annual) ID
+const LIVE_SUBSCRIPTION_MONTHLY     = 'price_1RktKRFBc7hwldVNQVDEPELh';     // <-- Live Subscription (Monthly) ID
+// Promotions
+const LIVE_PROMO_ANNUAL             = 'promo_1RkwoPFBc7hwldVN1kqmowdG';                   // <-- Live Promo Code (Annual) ID
+const LIVE_PROMO_MONTHLY            = 'promo_1RkwtrFBc7hwldVNhA31P7at';                  // <-- Live Promo Code (Monthly) ID
+
+// ----------- LIVE TEST (third bank) -----------
+// Paste your $1 live IDs here; select with MODE=live_test (KITE_MODE env)
+// Setup Fees
+const LIVE_TEST_SETUP_FEE_ANNUAL         = 'price_1S2xYAFBc7hwldVNG1aEUnvE';
+const LIVE_TEST_SETUP_FEE_MONTHLY        = 'price_1S2xYAFBc7hwldVNG1aEUnvE';
+// Plans
+const LIVE_TEST_SUBSCRIPTION_ANNUAL      = 'price_1S2xZkFBc7hwldVNa1ilWqEM';
+const LIVE_TEST_SUBSCRIPTION_MONTHLY     = 'price_1S2xZxFBc7hwldVN3lSGusE7';
+// Promotions
+const LIVE_TEST_PROMO_ANNUAL             = 'promo_live_test_annual';
+const LIVE_TEST_PROMO_MONTHLY            = 'promo_live_test_monthly';
 
 // =====================================================
 // RUNTIME SAFETY (non-fatal warnings)
@@ -53,6 +73,15 @@ if (!USE_SANDBOX_MODE) {
   if (looksPlaceholder(LIVE_SETUP_FEE_MONTHLY)) warn('LIVE_SETUP_FEE_MONTHLY appears to be a placeholder');
   if (looksPlaceholder(LIVE_SUBSCRIPTION_MONTHLY)) warn('LIVE_SUBSCRIPTION_MONTHLY appears to be a placeholder');
   if (looksPlaceholder(LIVE_PROMO_MONTHLY)) warn('LIVE_PROMO_MONTHLY appears to be a placeholder');
+
+  if (USE_LIVE_TEST_MODE) {
+    warn('MODE=live_test: Using LIVE_TEST_* IDs for prices/promos.');
+    const looksTestPlaceholder = (v) => typeof v === 'string' && /^(price|promo)_live_test/i.test(v);
+    if (looksTestPlaceholder(LIVE_TEST_SETUP_FEE_ANNUAL)) warn('LIVE_TEST_SETUP_FEE_ANNUAL appears to be a placeholder');
+    if (looksTestPlaceholder(LIVE_TEST_SUBSCRIPTION_ANNUAL)) warn('LIVE_TEST_SUBSCRIPTION_ANNUAL appears to be a placeholder');
+    if (looksTestPlaceholder(LIVE_TEST_SETUP_FEE_MONTHLY)) warn('LIVE_TEST_SETUP_FEE_MONTHLY appears to be a placeholder');
+    if (looksTestPlaceholder(LIVE_TEST_SUBSCRIPTION_MONTHLY)) warn('LIVE_TEST_SUBSCRIPTION_MONTHLY appears to be a placeholder');
+  }
 }
 
 // =====================================================
@@ -62,6 +91,7 @@ if (!USE_SANDBOX_MODE) {
 module.exports = {
   // MODE & STRIPE KEYS
   isSandboxMode: USE_SANDBOX_MODE,
+  mode: MODE,
 
   stripePublishableKey: USE_SANDBOX_MODE 
     ? process.env.STRIPE_API_KEY_PUBLIC_TEST 
@@ -74,22 +104,22 @@ module.exports = {
   // STRIPE PRICE & PROMO IDS (refer to constants above)
   stripePriceSetupFeeAnnual: USE_SANDBOX_MODE
     ? SANDBOX_SETUP_FEE_ANNUAL
-    : LIVE_SETUP_FEE_ANNUAL,
+    : (USE_LIVE_TEST_MODE ? LIVE_TEST_SETUP_FEE_ANNUAL : LIVE_SETUP_FEE_ANNUAL),
   stripePriceSetupFeeMonthly: USE_SANDBOX_MODE
     ? SANDBOX_SETUP_FEE_MONTHLY
-    : LIVE_SETUP_FEE_MONTHLY,
+    : (USE_LIVE_TEST_MODE ? LIVE_TEST_SETUP_FEE_MONTHLY : LIVE_SETUP_FEE_MONTHLY),
 
   stripePriceSubscriptionAnnual: USE_SANDBOX_MODE
     ? SANDBOX_SUBSCRIPTION_ANNUAL
-    : LIVE_SUBSCRIPTION_ANNUAL,
+    : (USE_LIVE_TEST_MODE ? LIVE_TEST_SUBSCRIPTION_ANNUAL : LIVE_SUBSCRIPTION_ANNUAL),
   stripePriceSubscriptionMonthly: USE_SANDBOX_MODE
     ? SANDBOX_SUBSCRIPTION_MONTHLY
-    : LIVE_SUBSCRIPTION_MONTHLY,
+    : (USE_LIVE_TEST_MODE ? LIVE_TEST_SUBSCRIPTION_MONTHLY : LIVE_SUBSCRIPTION_MONTHLY),
 
   stripePromoAnnual: USE_SANDBOX_MODE
-    ? SANDBOX_PROMO_ANNUAL
-    : LIVE_PROMO_ANNUAL,
+  ? SANDBOX_PROMO_ANNUAL
+  : (USE_LIVE_TEST_MODE ? LIVE_TEST_PROMO_ANNUAL : LIVE_PROMO_ANNUAL),
   stripePromoMonthly: USE_SANDBOX_MODE
-    ? SANDBOX_PROMO_MONTHLY
-    : LIVE_PROMO_MONTHLY
+  ? SANDBOX_PROMO_MONTHLY
+  : (USE_LIVE_TEST_MODE ? LIVE_TEST_PROMO_MONTHLY : LIVE_PROMO_MONTHLY)
 };
