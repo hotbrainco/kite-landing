@@ -10,7 +10,7 @@ require('dotenv').config();
 // =====================================================
 
 // Set this to true for sandbox mode, false for live mode
-const USE_SANDBOX_MODE = true;
+const USE_SANDBOX_MODE = false;
 
 // =====================================================
 // STRIPE PRICE & PROMO ID CONSTANTS
@@ -36,6 +36,24 @@ const LIVE_PROMO_ANNUAL             = 'promo_live_annual';                   // 
 const LIVE_SETUP_FEE_MONTHLY        = 'price_live_setup_fee_monthly';        // <-- Live Setup Fee (Monthly) ID
 const LIVE_SUBSCRIPTION_MONTHLY     = 'price_live_subscription_monthly';     // <-- Live Subscription (Monthly) ID
 const LIVE_PROMO_MONTHLY            = 'promo_live_monthly';                  // <-- Live Promo Code (Monthly) ID
+
+// =====================================================
+// RUNTIME SAFETY (non-fatal warnings)
+// =====================================================
+// When switching to LIVE, surface helpful warnings if config looks incomplete.
+if (!USE_SANDBOX_MODE) {
+  const warn = (msg) => console.warn(`[env.cjs] ${msg}`);
+  if (!process.env.STRIPE_API_KEY_PUBLIC) warn('LIVE mode: STRIPE_API_KEY_PUBLIC is not set');
+  if (!process.env.STRIPE_API_KEY_SECRET) warn('LIVE mode: STRIPE_API_KEY_SECRET is not set');
+
+  const looksPlaceholder = (v) => typeof v === 'string' && /^(price|promo)_live/i.test(v);
+  if (looksPlaceholder(LIVE_SETUP_FEE_ANNUAL)) warn('LIVE_SETUP_FEE_ANNUAL appears to be a placeholder');
+  if (looksPlaceholder(LIVE_SUBSCRIPTION_ANNUAL)) warn('LIVE_SUBSCRIPTION_ANNUAL appears to be a placeholder');
+  if (looksPlaceholder(LIVE_PROMO_ANNUAL)) warn('LIVE_PROMO_ANNUAL appears to be a placeholder');
+  if (looksPlaceholder(LIVE_SETUP_FEE_MONTHLY)) warn('LIVE_SETUP_FEE_MONTHLY appears to be a placeholder');
+  if (looksPlaceholder(LIVE_SUBSCRIPTION_MONTHLY)) warn('LIVE_SUBSCRIPTION_MONTHLY appears to be a placeholder');
+  if (looksPlaceholder(LIVE_PROMO_MONTHLY)) warn('LIVE_PROMO_MONTHLY appears to be a placeholder');
+}
 
 // =====================================================
 // EXPORTS
