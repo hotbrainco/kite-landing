@@ -195,19 +195,9 @@ exports.handler = async (event) => {
       };
     }
 
-    // Get the price ID for the setup fee based on plan
+    // Resolve price IDs for setup and subscription
     const priceIds = getPriceIds(plan);
-    const priceId = priceIds.SETUP_FEE;
-    // Fetch price information from Stripe
-    const price = await stripe.prices.retrieve(priceId, {
-      expand: ['product'] // Expand the product information
-    });
-    
-  const amount = price.unit_amount;
-  const planLabel = plan === 'annual' ? 'Annual' : 'Monthly';
-  const description = `${price.product.name} (Launch Promo with ${planLabel} Plan Subscription)`;
-
-    // First create a customer in Stripe
+    // First create a customer in Stripe (attach the card token as default source)
     const stripeCustomer = await stripe.customers.create({
       email: customer.email,
       name: customer.name,
@@ -217,24 +207,37 @@ exports.handler = async (event) => {
       },
       source: token
     });
-
-  // Then create the charge using the customer ID
-    const charge = await stripe.charges.create({
-      amount: amount,
-      currency: 'usd',
-      description: description,
+    
+    // Create subscription and put setup fee on the first invoice via add_invoice_items
+    const promoId = plan === 'annual' ? ANNUAL_PROMO_CODE : MONTHLY_PROMO_CODE;
+    const subscription = await stripe.subscriptions.create({
       customer: stripeCustomer.id,
-      receipt_email: customer.email // Stripe will send receipt email
+      items: [{ price: priceIds.SUBSCRIPTION }],
+      add_invoice_items: [ { price: priceIds.SETUP_FEE } ],
+      ...(promoId ? { promotion_code: promoId } : {}),
+      expand: ['latest_invoice.payment_intent']
     });
+    
+    // Extract invoice/receipt details
+    const latestInvoice = subscription.latest_invoice;
+    let receiptUrl = null;
+    if (latestInvoice && latestInvoice.hosted_invoice_url) {
+      receiptUrl = latestInvoice.hosted_invoice_url;
+    } else if (latestInvoice && latestInvoice.invoice_pdf) {
+      receiptUrl = latestInvoice.invoice_pdf;
+    }
 
     return {
       statusCode: 200,
       body: JSON.stringify({ 
         success: true, 
-        chargeId: charge.id,
+        // Use invoice id/number as confirmation reference
+        chargeId: latestInvoice ? (latestInvoice.number || latestInvoice.id) : null,
         customerName: customer.name,
         customerEmail: customer.email,
-  receiptUrl: charge.receipt_url
+        receiptUrl: receiptUrl,
+        subscriptionId: subscription.id,
+        invoiceId: latestInvoice ? latestInvoice.id : null
       }),
     };
   } catch (error) {
