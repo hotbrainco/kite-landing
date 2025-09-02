@@ -54,8 +54,8 @@ const LIVE_TEST_SETUP_FEE_MONTHLY        = 'price_1S2xYAFBc7hwldVNG1aEUnvE';
 const LIVE_TEST_SUBSCRIPTION_ANNUAL      = 'price_1S2xZkFBc7hwldVNa1ilWqEM';
 const LIVE_TEST_SUBSCRIPTION_MONTHLY     = 'price_1S2xZxFBc7hwldVN3lSGusE7';
 // Promotions
-const LIVE_TEST_PROMO_ANNUAL             = 'promo_live_test_annual';
-const LIVE_TEST_PROMO_MONTHLY            = 'promo_live_test_monthly';
+const LIVE_TEST_PROMO_ANNUAL             = 'promo_1RkwoPFBc7hwldVN1kqmowdG';
+const LIVE_TEST_PROMO_MONTHLY            = 'promo_1RkwtrFBc7hwldVNhA31P7at';
 
 // =====================================================
 // RUNTIME SAFETY (non-fatal warnings)

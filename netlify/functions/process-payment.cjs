@@ -187,11 +187,11 @@ exports.handler = async (event) => {
     // Otherwise, process a payment
     const { token, plan, customer } = requestData;
     
-    // Validate plan
-    if (plan !== 'annual') {
+  // Validate plan
+  if (plan !== 'annual') {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Only annual plan is currently supported.' }),
+    body: JSON.stringify({ error: 'Only annual plan is currently supported.' }),
       };
     }
 
@@ -204,7 +204,7 @@ exports.handler = async (event) => {
     });
     
     const amount = price.unit_amount;
-    const description = `${price.product.name} - Annual Plan`;
+  const description = `${price.product.name} - Annual Plan`;
 
     // First create a customer in Stripe
     const stripeCustomer = await stripe.customers.create({
@@ -217,7 +217,7 @@ exports.handler = async (event) => {
       source: token
     });
 
-    // Then create the charge using the customer ID
+  // Then create the charge using the customer ID
     const charge = await stripe.charges.create({
       amount: amount,
       currency: 'usd',
@@ -233,7 +233,7 @@ exports.handler = async (event) => {
         chargeId: charge.id,
         customerName: customer.name,
         customerEmail: customer.email,
-        receiptUrl: charge.receipt_url
+  receiptUrl: charge.receipt_url
       }),
     };
   } catch (error) {
